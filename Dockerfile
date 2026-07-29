@@ -1,57 +1,23 @@
-# SatarkSetu - Docker Container
-# Multi-stage build for optimized image size
+# FastAPI-ready image for the future Bandhan backend service.
+# No application code is included during repository initialization.
+FROM python:3.12-slim
 
-# Stage 1: Base image with Python
-FROM python:3.13-slim as base
+# Keep Python output predictable inside containers.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Set working directory
+# Prepare the application workspace.
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+# Install only the web runtime required by the planned FastAPI service.
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir fastapi uvicorn
 
-# Stage 2: Dependencies
-FROM base as dependencies
+# Copy the intentionally empty backend module placeholder.
+COPY backend/ /app/backend/
 
-# Copy requirements
-COPY requirements.txt .
+# The port reserved for the future FastAPI service.
+EXPOSE 8000
 
-# Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Stage 3: Application
-FROM dependencies as application
-
-# Copy application code
-COPY . .
-
-# Create data directory
-RUN mkdir -p /app/data
-
-# Generate mock data (optional - can be mounted as volume)
-RUN python data_generator.py
-
-# Expose ports
-# 8501 for Streamlit dashboard
-# 8000 for FastAPI backend
-EXPOSE 8501 8000
-
-# Environment variables
-ENV PYTHONUNBUFFERED=1
-ENV STREAMLIT_SERVER_PORT=8501
-ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8501/_stcore/health || exit 1
-
-# Default command (run dashboard)
-CMD ["streamlit", "run", "dashboard_enhanced.py", "--server.address=0.0.0.0"]
-
-# Alternative commands (uncomment as needed):
-# Run backend: CMD ["python", "backend.py"]
-# Run tests: CMD ["pytest", "tests/", "-v", "-m", "not slow"]
+# Application startup is defined when FastAPI source is introduced in a later phase.
+CMD ["sh", "-c", "echo 'Bandhan backend placeholder: no application source is included in Review 1.' && tail -f /dev/null"]

@@ -1,99 +1,49 @@
-# Python
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and build artifacts
+node_modules/
+dist/
+build/
+coverage/
+.next/
+out/
+.cache/
+.parcel-cache/
+venv/
+.venv/
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
+*.pyo
+*.pyd
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# Virtual Environment
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb_checkpoints/
-
-# Testing
+# Test and tool caches
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
 htmlcov/
 .tox/
 .nox/
-coverage.xml
-*.cover
-.hypothesis/
 
-# Streamlit
-.streamlit/
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Data files (optional - uncomment if you don't want to commit data)
-# cyber_events.csv
-# transactions.csv
-
-# Logs
-*.log
-logs/
-
-# OS
-Thumbs.db
+# IDE and operating-system files
 .DS_Store
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
+Thumbs.db
+.idea/
+.vscode/
 *.swp
 
-# Distribution / packaging
-*.tar.gz
-*.zip
+# Data, logs, and generated model assets
+*.log
+*.pid
+*.sqlite3
+data/
+models/
+*.ipynb
 
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre
-.pyre/
-
-# pytype
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-API_KEY_INSTRUCTIONS.txt
-GEMINI_STATUS.md
+# Docker local overrides and volumes
+docker-compose.override.yml
+postgres_data/

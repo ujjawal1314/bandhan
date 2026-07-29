@@ -1,3 +1,0 @@
-@echo off
-echo Starting SatarkSetu Enhanced Dashboard...
-streamlit run dashboard_enhanced.py
