@@ -97,7 +97,7 @@ The success of Bandhan will be evaluated using:
 - Cloud deployment assumes internet connectivity.
 - Integration with external banking systems is outside the scope of Review 1.
 - Mobile application support is not included in the initial release.
-- 
+  
 ## Technology Stack
 
 | Area | Technology |
@@ -175,7 +175,7 @@ Create a short-lived branch from `develop`, open a pull request for review, and 
 These URLs become active when the application is implemented. Review 1 deliberately includes no frontend or backend source code, so no application endpoint is currently served.
 
 ## Team Members
-Sumedha Ganguli 24BAI 1630
+Sumedha Ganguli 24BAI1630, 
 Ujjawal Singh 24BRS1410
 ## Documentation
 
