@@ -1,17 +1,4 @@
-# Bandhan
-
-## Project Overview
-
-**Bandhan – Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction** is a cloud-based Software Engineering project. It is designed around enterprise loan-recovery workflow management, including authentication, role-based access, borrower and loan records, recovery-case handling, dashboards, and analytics.
-
-AI-based risk prediction is one planned module, not the project’s primary focus. This Review 1 repository contains only initialization, DevOps configuration, documentation, and placeholders—no application implementation.
-# Vision Document
-
-## Project Name
-
-**Bandhan – Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction**
-
----
+# Bandhan - Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction
 
 ## Project Overview
 
