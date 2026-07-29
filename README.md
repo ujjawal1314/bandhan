@@ -85,11 +85,8 @@ Create a short-lived branch from `develop`, open a pull request for review, and 
 These URLs become active when the application is implemented. Review 1 deliberately includes no frontend or backend source code, so no application endpoint is currently served.
 
 ## Team Members
-
-| Name | Role | GitHub |
-| --- | --- | --- |
-| _To be added_ | _To be added_ | _To be added_ |
-
+Sumedha Ganguli 24BAI 1630
+Ujjawal Singh 24BRS1410
 ## Documentation
 
 - [Frontend placeholder](frontend/README.md)
