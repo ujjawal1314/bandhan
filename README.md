@@ -66,6 +66,47 @@ Loan recovery in most financial institutions today still relies on manual spread
 
 ---
 
+## Local Development Tools
+
+To set up and run Bandhan locally, install the following tools:
+
+| Tool | Purpose | Version |
+|---|---|---|
+| [Git](https://git-scm.com/downloads) | Version control | 2.40+ |
+| [Node.js](https://nodejs.org/) + npm | Running/building the React frontend | Node 18+ |
+| [Python](https://www.python.org/downloads/) | Running the FastAPI backend & AI risk model | 3.11+ |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Containerizing and running the full stack | Latest |
+| [PostgreSQL](https://www.postgresql.org/download/) | Local database (optional if using the Dockerized DB) | 15+ |
+| [GitHub CLI](https://cli.github.com/) | Managing issues/PRs from the terminal | Latest |
+| Code editor — [VS Code](https://code.visualstudio.com/) (recommended) | Development environment | Latest |
+
+### Recommended VS Code Extensions
+- Python (Microsoft)
+- ESLint
+- Prettier
+- Docker (Microsoft)
+- PostgreSQL / SQLTools (optional, for querying the DB directly)
+
+### Verifying Your Setup
+Run the following to confirm each tool is installed correctly:
+```bash
+git --version
+node --version
+npm --version
+python --version
+docker --version
+docker compose version
+gh --version
+```
+
+### Environment Variables
+Create a `.env` file in the project root (see `.env.example`) with the following:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/bandhan
+JWT_SECRET=your-secret-key
+AI_MODEL_PATH=./ai/models/risk_model.pkl
+```
+
 ## Assumptions & Constraints
 
 **Assumptions**

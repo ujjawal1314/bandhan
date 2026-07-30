@@ -10,9 +10,9 @@
 set -euo pipefail
 
 # ---------------------- CONFIG (edit these) ----------------------
-REPO="your-username/bandhan"     # <-- your repo, e.g. "sumedha123/bandhan"
-PROJECT_NUMBER=""                # <-- optional: your Project number (e.g. "1"). Leave blank to skip.
-PROJECT_OWNER=""                 # <-- optional: org/user that owns the Project (e.g. "sumedha123"). Leave blank to skip.
+REPO="ujjawal1314/bandhan"     
+PROJECT_NUMBER=""                
+PROJECT_OWNER=""                 
 # -------------------------------------------------------------------
 
 echo "Creating labels (safe to ignore 'already exists' errors)..."
