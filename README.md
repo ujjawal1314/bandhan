@@ -119,3 +119,113 @@ AI_MODEL_PATH=./ai/models/risk_model.pkl
 - Fixed academic timeline of 6 sprints
 - Tech stack is fixed: React (frontend), FastAPI (backend), PostgreSQL (database), Python (AI), Docker + AWS EC2 (deployment), GitHub (version control)
 - AI is scoped strictly to risk prediction — it does not drive any other part of the workflow (e.g., no automated decision-making or case assignment)
+
+## Quick Start — Local Development
+
+### Prerequisites
+Make sure you've installed everything listed in [Local Development Tools](#local-development-tools) above, and that Docker Desktop is running.
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/bandhan.git
+cd bandhan
+```
+
+### 2. Set up environment variables
+```bash
+cp .env.example .env
+```
+Then open `.env` and fill in any values specific to your machine (defaults work fine for local development).
+
+### 3. Build and run the full stack with Docker
+```bash
+docker compose up --build
+```
+This starts three containers:
+- `bandhan-db` — PostgreSQL database on port `5432`
+- `bandhan-backend` — FastAPI backend on port `8000`
+- `bandhan-frontend` — React frontend on port `3000`
+
+### 4. Access the app
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend API docs (FastAPI Swagger UI): [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### 5. Stopping the app
+```bash
+docker compose down
+```
+To also remove the database volume (fresh start):
+```bash
+docker compose down -v
+```
+
+### Running Without Docker (optional, for active development)
+
+**Backend:**
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm start
+```
+
+**Database:** install PostgreSQL locally and update `DATABASE_URL` in `.env` to point to it, or keep using the Dockerized `db` service alone:
+```bash
+docker compose up db
+```
+
+## Branching Strategy
+
+Bandhan uses a simplified Git Flow model with three levels of branches, keeping unstable work isolated from the code that's always deployable.
+
+### `main`
+- The production branch — always stable, always deployable
+- This is what gets containerized and deployed to AWS EC2
+- Nobody commits directly here; code only arrives after being tested and merged from `develop`
+
+### `develop`
+- The integration branch — where finished features come together before a release
+- Once several features are merged in and stable, `develop` is merged into `main`
+- Acts as a staging area — can be slightly rougher than `main`, but should still basically work
+
+### `feature/<name>`
+- One branch per user story or task — this is where day-to-day work happens
+- Named after the user story it implements, e.g. `feature/us-08-create-recovery-case`
+- Safe to experiment on since it's isolated from other work
+- Merged into `develop` via a pull request once the feature is complete and tested
+
+### Example structure by sprint
+
+```
+main
+ └── develop
+      ├── feature/us-01-secure-admin-login       (Sprint 2)
+      ├── feature/us-06-create-borrower-profile   (Sprint 3)
+      ├── feature/us-11-manager-dashboard         (Sprint 4)
+      └── feature/us-24-containerize-app          (Sprint 6)
+```
+
+Each feature branch is merged into `develop` once done and tested. At the end of each sprint, `develop` is merged into `main` — that merge point represents the sprint's deliverable/demo state.
+
+### Workflow
+
+```bash
+git checkout -b feature/your-feature-name
+git add .
+git commit -m "Add: short description of change"
+git push origin feature/your-feature-name
+```
+Then open a pull request into `develop` on GitHub.
+
+### Why this matters
+- **Traceability** — branch names tied to user story IDs (e.g. `us-08`) let anyone reviewing the repo see exactly which branch implemented which requirement
+- **Safe collaboration** — isolates in-progress work so it can't break `develop` or `main`
+- **Demonstrates SDLC process** — reflects standard industry practice, showing the project follows a real development workflow rather than just producing working code
