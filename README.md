@@ -184,36 +184,38 @@ docker compose up db
 
 ## Branching Strategy
 
-Bandhan uses a simplified Git Flow model with three levels of branches, keeping unstable work isolated from the code that's always deployable.
+Bandhan follows the **GitHub Flow** branching strategy to ensure organized development, efficient collaboration, and a stable codebase throughout the Software Development Life Cycle (SDLC). Each new feature is developed in a dedicated feature branch, allowing team members to work independently without affecting the stability of the `main` branch.
 
-### `main`
-- The production branch — always stable, always deployable
-- This is what gets containerized and deployed to AWS EC2
-- Nobody commits directly here; code only arrives after being tested and merged from `develop`
+### Branches
 
-### `develop`
-- The integration branch — where finished features come together before a release
-- Once several features are merged in and stable, `develop` is merged into `main`
-- Acts as a staging area — can be slightly rougher than `main`, but should still basically work
+| Branch | Purpose |
+|--------|---------|
+| `main` | Contains the latest stable and production-ready version of the project. All tested and reviewed changes are merged into this branch. |
+| `feature/login` | Development of secure authentication and Role-Based Access Control (RBAC) functionality. |
+| `feature/dashboard` | Development of role-specific dashboards, analytics, and recovery monitoring interfaces. |
+| `feature/loan-management` | Development of borrower management, loan management, and recovery case management modules. |
+| `feature/ai-risk-prediction` | Development of the AI-based borrower risk prediction module and its integration with the backend. |
 
-### `feature/<name>`
-- One branch per user story or task — this is where day-to-day work happens
-- Named after the user story it implements, e.g. `feature/us-08-create-recovery-case`
-- Safe to experiment on since it's isolated from other work
-- Merged into `develop` via a pull request once the feature is complete and tested
+### Development Workflow
 
-### Example structure by sprint
+The project follows the GitHub Flow process:
 
-```
-main
- └── develop
-      ├── feature/us-01-secure-admin-login       (Sprint 2)
-      ├── feature/us-06-create-borrower-profile   (Sprint 3)
-      ├── feature/us-11-manager-dashboard         (Sprint 4)
-      └── feature/us-24-containerize-app          (Sprint 6)
-```
+1. Create a new feature branch from the `main` branch.
+2. Develop and test the assigned feature independently.
+3. Commit changes with meaningful commit messages.
+4. Push the feature branch to GitHub.
+5. Create a Pull Request (PR) for code review.
+6. After successful review and testing, merge the feature branch into the `main` branch.
 
-Each feature branch is merged into `develop` once done and tested. At the end of each sprint, `develop` is merged into `main` — that merge point represents the sprint's deliverable/demo state.
+### Benefits
+
+- Enables parallel development by multiple team members.
+- Keeps the `main` branch stable and deployment-ready.
+- Reduces merge conflicts through isolated feature development.
+- Supports systematic code review using Pull Requests.
+- Provides clear version history and improves project maintainability.
+
+This branching strategy ensures a clean, scalable, and collaborative development workflow while following industry-standard Git version control practices.
 
 ### Workflow
 
