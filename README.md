@@ -127,7 +127,7 @@ Make sure you've installed everything listed in [Local Development Tools](#local
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/bandhan.git
+git clone https://github.com/ujjawal1314/bandhan.git
 cd bandhan
 ```
 
