@@ -1,5 +1,5 @@
 # Frontend
 
-Reserved for the future React web interface for dashboard, analytics, and role-based user workflows.
+Minimal React + Vite homepage used for Software Engineering Review 1.
 
-No frontend framework, components, or application code are included in Review 1.
+It displays Bandhan project information and deployment-status placeholders only.

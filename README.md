@@ -1,191 +1,80 @@
-# Bandhan - Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction
+# Bandhan
+### Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction
 
-## Project Overview
+---
 
-Bandhan is a cloud-based Loan Recovery Workflow Management System designed to help financial institutions efficiently manage loan recovery operations. The platform centralizes borrower information, loan records, recovery cases, and operational workflows into a secure application while using AI-based risk prediction to identify high-risk borrowers and support proactive recovery decisions.
+## Project Name & Overview
 
-The system enables recovery teams to prioritize critical cases, monitor recovery progress through dashboards, and improve collaboration across departments using role-based access control and workflow automation.
+**Bandhan** is a centralized, cloud-based software platform that digitizes and manages the entire loan recovery lifecycle for banks and financial institutions — from borrower and loan onboarding, through recovery case creation and field-officer assignment, to AI-assisted risk prioritization and manager-level reporting.
+
+The project is built primarily as a **Software Engineering** exercise, demonstrating the full SDLC (requirements → design → implementation → testing → deployment → maintenance) using an Agile Scrum process across 6 sprints. Artificial Intelligence is used in a single, well-scoped capacity — borrower risk scoring — rather than as the core focus of the system.
 
 ---
 
 ## Problem It Solves
 
-Financial institutions often rely on fragmented systems and manual processes for loan recovery, making it difficult to identify high-risk borrowers, prioritize recovery cases, and track recovery performance efficiently.
+Loan recovery in most financial institutions today still relies on manual spreadsheets, phone calls, and disconnected systems. This creates several recurring problems:
 
-Bandhan addresses these challenges by:
+- Case tracking is fragmented and error-prone
+- Assigning recovery officers to cases is a manual, ad-hoc process
+- Managers lack real-time visibility into recovery progress
+- Generating reports is slow and time-consuming
+- High-risk borrowers are difficult to identify early, delaying intervention
 
-- Centralizing loan recovery operations
-- Automating recovery workflows
-- Predicting borrower risk using AI
-- Providing real-time dashboards and analytics
-- Improving collaboration among recovery teams
-- Reducing manual effort and operational delays
+**Bandhan** addresses each of these by centralizing borrower, loan, and case data in one system, automating officer assignment and status tracking, and surfacing AI-generated risk scores so managers can prioritize the cases that matter most.
 
 ---
 
 ## Target Users (Personas)
 
-### Administrator
-- Manages users and system configuration
-- Assigns roles and permissions
-- Monitors overall system health
-
-### Recovery Manager
-- Assigns recovery cases
-- Monitors team performance
-- Reviews recovery analytics
-
-### Recovery Officer
-- Handles assigned recovery cases
-- Updates borrower interactions
-- Tracks case progress
-
-### Bank Management
-- Reviews reports and recovery performance
-- Makes strategic decisions based on analytics
+| Persona | Role Summary | Key Needs |
+|---|---|---|
+| **Admin** | Manages the platform itself | Create/manage users, assign roles, view system logs |
+| **Manager** | Oversees recovery operations | Create borrowers/loans/cases, assign officers, monitor progress, view AI risk scores, access dashboards & reports |
+| **Recovery Officer** | Works cases in the field | View assigned cases, log visit details and remarks, update recovery status |
+| **Borrower** | The individual with an outstanding loan | View loan details and current recovery status |
 
 ---
 
 ## Vision Statement
 
-To build an intelligent, secure, and scalable Loan Recovery Workflow Management System that empowers financial institutions to improve recovery efficiency, reduce non-performing assets (NPAs), and make informed decisions through AI-assisted risk prediction and workflow automation.
+> To replace fragmented, manual loan-recovery processes with a single, centralized platform that gives every stakeholder — from field officer to manager — real-time visibility and AI-informed prioritization, while remaining simple, secure, and cloud-ready from day one.
 
 ---
 
 ## Key Features / Goals
 
-- Secure Role-Based Access Control (RBAC)
-- Borrower and Loan Management
-- Recovery Case Management
-- AI-Based Borrower Risk Prediction
-- Interactive Dashboards and Analytics
-- Workflow Automation
-- Centralized Data Management
-- Docker-based Development Environment
-- Cloud Deployment on AWS
-- Modular and Scalable Software Architecture
+- **Secure Authentication & RBAC** — JWT-based login with role-based access for Admin, Manager, Officer, and Borrower
+- **User Management** — Admin-controlled creation and management of Manager and Officer accounts
+- **Borrower Management** — Centralized borrower profiles (contact, address, employment, documents)
+- **Loan Management** — Track loan amount, due dates, interest, and status
+- **Recovery Case Management** — Create cases, assign officers, track status, log visit history and remarks
+- **AI Risk Prediction** — ML-based risk scoring on borrower data to help managers prioritize recovery efforts
+- **Dashboards** — Role-specific dashboards (Manager, Officer) surfacing recovery progress and high-risk borrowers
+- **Reporting** — Recovery summaries, pending case reports, and officer performance reports
+- **Containerized Deployment** — Docker-based packaging deployed to AWS EC2, with GitHub-based version control and CI/CD
 
 ---
 
 ## Success Metrics
 
-The success of Bandhan will be evaluated using:
-
-- Reduced manual effort in recovery workflows
-- Faster identification of high-risk borrowers
-- Improved recovery case tracking
-- Better recovery prioritization using AI predictions
-- Increased operational efficiency
-- Secure and reliable access through RBAC
-- Successful deployment using Docker and cloud infrastructure
+- All **Must Have** MoSCoW features (auth, RBAC, borrower/loan/case management, officer assignment, dashboard, PostgreSQL, Docker setup) implemented and demonstrable by the end of Sprint 4
+- End-to-end recovery workflow (create case → assign officer → update status → resolve) functions without manual workarounds
+- AI risk prediction module returns a risk score for a borrower in under 2 seconds
+- System successfully containerized and deployed to AWS EC2 with a working CI/CD pipeline via GitHub
+- All 6 sprints completed on schedule with SRS, architecture diagrams, and test documentation delivered alongside working software
 
 ---
 
-## Assumptions
+## Assumptions & Constraints
 
-- Loan and borrower data is available and accurate.
-- Authorized users have appropriate access permissions.
-- AI predictions assist decision-making and do not replace human judgment.
-- Users have basic technical knowledge of the application.
+**Assumptions**
+- Loan and borrower data used during development will be sample/synthetic data, not real customer data
+- A single AI/ML model (trained on available sample data) is sufficient to demonstrate risk-scoring functionality — model accuracy is not the primary evaluation criterion for this Software Engineering course project
+- Users (Admin, Manager, Officer) are internal staff with basic digital literacy; no extensive onboarding/training flow is required for v1
 
----
-
-## Constraints
-
-- Initial version focuses on loan recovery workflows only.
-- AI prediction accuracy depends on data quality.
-- Cloud deployment assumes internet connectivity.
-- Integration with external banking systems is outside the scope of Review 1.
-- Mobile application support is not included in the initial release.
-  
-## Technology Stack
-
-| Area | Technology |
-| --- | --- |
-| Frontend | React |
-| Backend | FastAPI |
-| Database | PostgreSQL |
-| AI | Python |
-| Containerization | Docker |
-| Deployment | AWS EC2 |
-| Version Control | Git + GitHub |
-
-## Repository Structure
-
-```text
-bandhan/
-├── frontend/             # Future React application
-├── backend/              # Future FastAPI services
-├── ai-model/             # Future AI risk-prediction assets
-├── database/             # Future PostgreSQL schema and migrations
-├── docs/                 # Architecture, UML, SRS, and testing documents
-├── docker/               # Docker setup guidance
-├── .github/workflows/    # GitHub Actions workflows
-├── Dockerfile            # FastAPI-ready backend image definition
-├── docker-compose.yml    # Backend and PostgreSQL local environment
-├── .gitignore            # Generated files and local-secret exclusions
-└── LICENSE               # MIT License
-```
-
-Each top-level module includes a README and `.gitkeep` placeholder where appropriate so the intended structure is tracked before implementation begins.
-
-## Branching Strategy
-
-Bandhan follows **GitHub Flow** with a structured branch naming convention:
-
-- `main`: stable, reviewed code ready for release or academic review.
-- `develop`: shared integration branch for completed features.
-- `feature/*`: isolated work for a new capability, such as `feature/login`.
-- `bugfix/*`: focused corrections for identified defects.
-- `release/*`: release-preparation, final verification, and documentation updates.
-
-Create a short-lived branch from `develop`, open a pull request for review, and merge only after CI succeeds. Promote approved work to `main` for review milestones and releases.
-
-## Quick Start – Local Development
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your-username/bandhan.git
-   ```
-
-2. Enter the project directory:
-
-   ```bash
-   cd bandhan
-   ```
-
-3. Build and start the local containers:
-
-   ```bash
-   docker compose up --build
-   ```
-
-4. Stop the containers when finished:
-
-   ```bash
-   docker compose down
-   ```
-
-### Expected URLs
-
-- Backend (reserved for FastAPI): <http://localhost:8000>
-- Frontend (reserved for React): <http://localhost:3000>
-
-These URLs become active when the application is implemented. Review 1 deliberately includes no frontend or backend source code, so no application endpoint is currently served.
-
-## Team Members
-Sumedha Ganguli 24BAI1630, 
-Ujjawal Singh 24BRS1410
-## Documentation
-
-- [Frontend placeholder](frontend/README.md)
-- [Backend placeholder](backend/README.md)
-- [AI model placeholder](ai-model/README.md)
-- [Database placeholder](database/README.md)
-- [Documentation index](docs/README.md)
-- [Docker guide](docker/README.md)
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+**Constraints**
+- Project scope is limited to the **Must Have** and **Should Have** MoSCoW items for the current version; features under **Won't Have** (payment gateway, chatbot, OTP auth, mobile app, real-time chat, etc.) are explicitly out of scope
+- Fixed academic timeline of 6 sprints
+- Tech stack is fixed: React (frontend), FastAPI (backend), PostgreSQL (database), Python (AI), Docker + AWS EC2 (deployment), GitHub (version control)
+- AI is scoped strictly to risk prediction — it does not drive any other part of the workflow (e.g., no automated decision-making or case assignment)

@@ -1,5 +1,10 @@
 # Backend
 
-Reserved for the future FastAPI services supporting authentication, RBAC, borrower and loan management, recovery cases, risk prediction integration, and analytics.
+Minimal FastAPI service used for Software Engineering Review 1.
 
-No APIs, business logic, or authentication code are included in Review 1.
+Available endpoints:
+
+- `GET /` returns the project status and version.
+- `GET /health` returns the service health status.
+
+Authentication, database features, AI, and business logic are intentionally excluded.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Docker Compose defines the infrastructure baseline for Bandhan: a FastAPI-ready backend container and PostgreSQL 16. The backend is an intentional placeholder; no application source, API, schema, or business logic is included in Review 1.
+Docker Compose starts the Review 1 React homepage, FastAPI service, and PostgreSQL 16 together. It contains no application database schema, AI, authentication, or business logic.
 
 ## Start Local Containers
 
@@ -10,18 +10,7 @@ Docker Compose defines the infrastructure baseline for Bandhan: a FastAPI-ready 
 docker compose up --build
 ```
 
-PostgreSQL listens on `localhost:5432` by default and uses the `bandhan` database. The backend reserves `localhost:8000` for the future FastAPI service. Override defaults in a local `.env` file:
-
-```dotenv
-POSTGRES_DB=bandhan
-POSTGRES_USER=bandhan
-POSTGRES_PASSWORD=replace-with-a-local-secret
-POSTGRES_PORT=5432
-BACKEND_PORT=8000
-APP_ENV=development
-```
-
-Do not commit `.env` files or credentials.
+The homepage is available at <http://localhost:3000>, the API at <http://localhost:8000>, and PostgreSQL at `localhost:5432`. The local database uses the preconfigured `bandhan` user and database.
 
 ## Stop Containers
 
