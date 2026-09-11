@@ -21,8 +21,7 @@ Loan recovery in most financial institutions today still relies on manual spread
 - Generating reports is slow and time-consuming
 - High-risk borrowers are difficult to identify early, delaying intervention
 
-**Bandhan** addresses each of these by centralizing borrower, loan, and case data in one system, automating officer assignment and status tracking, and surfacing AI-generated risk scores so managers can prioritize the cases that matter most.
-
+**Bandhan** addresses these problems by centralizing borrower, loan, and recovery case data in one system, supporting officer assignment and status tracking, and surfacing AI-generated risk scores so managers can prioritize cases that require attention.
 ---
 
 ## Target Users (Personas)
@@ -50,7 +49,6 @@ Loan recovery in most financial institutions today still relies on manual spread
 - **Loan Management** — Track loan amount, due dates, interest, and status
 - **Recovery Case Management** — Create cases, assign officers, track status, log visit history and remarks
 - **AI Risk Prediction** — ML-based risk scoring on borrower data to help managers prioritize recovery efforts
-- **Dashboards** — Role-specific dashboards (Manager, Officer) surfacing recovery progress and high-risk borrowers
 - **Reporting** — Recovery summaries, pending case reports, and officer performance reports
 - **Containerized Deployment** — Docker-based packaging deployed to AWS EC2, with GitHub-based version control and CI/CD
 
@@ -184,7 +182,7 @@ docker compose up db
 
 ## Branching Strategy
 
-Bandhan follows the **GitHub Flow** branching strategy to ensure organized development, efficient collaboration, and a stable codebase throughout the Software Development Life Cycle (SDLC). Each new feature is developed in a dedicated feature branch, allowing team members to work independently without affecting the stability of the `main` branch.
+Bandhan follows the **GitHub Flow** branching strategy to ensure organized development, efficient collaboration, and a stable codebase throughout the Software Development Life Cycle (SDLC). Each new feature is developed in a dedicated feature branch, allowing team members to work independently without directly affecting the stability of the `main` branch.
 
 ### Branches
 
@@ -192,9 +190,11 @@ Bandhan follows the **GitHub Flow** branching strategy to ensure organized devel
 |--------|---------|
 | `main` | Contains the latest stable and production-ready version of the project. All tested and reviewed changes are merged into this branch. |
 | `feature/login` | Development of secure authentication and Role-Based Access Control (RBAC) functionality. |
-| `feature/dashboard` | Development of role-specific dashboards, analytics, and recovery monitoring interfaces. |
-| `feature/loan-management` | Development of borrower management, loan management, and recovery case management modules. |
+| `feature/loan-management` | Development of loan management interfaces and related loan account functionality. |
+| `feature/recovery-case-management` | Development of recovery case management, case tracking, recovery stages, and follow-up workflows. |
 | `feature/ai-risk-prediction` | Development of the AI-based borrower risk prediction module and its integration with the backend. |
+| `feature/analytics-reports` | Development of portfolio analytics, recovery performance metrics, charts, and reporting functionality. |
+| `feature/action-center` | Development of the Action Center for pending tasks, important alerts, follow-ups, schedules, and activities requiring user attention. |
 
 ### Development Workflow
 
@@ -219,15 +219,39 @@ This branching strategy ensures a clean, scalable, and collaborative development
 
 ### Workflow
 
-```bash
 git checkout -b feature/your-feature-name
 git add .
 git commit -m "Add: short description of change"
 git push origin feature/your-feature-name
-```
-Then open a pull request into `develop` on GitHub.
 
 ### Why this matters
 - **Traceability** — branch names tied to user story IDs (e.g. `us-08`) let anyone reviewing the repo see exactly which branch implemented which requirement
 - **Safe collaboration** — isolates in-progress work so it can't break `develop` or `main`
 - **Demonstrates SDLC process** — reflects standard industry practice, showing the project follows a real development workflow rather than just producing working code
+
+## Software Design
+
+Bandhan follows a layered three-tier architecture consisting of a React frontend, FastAPI backend, and PostgreSQL database. The backend is organized into modular business components, while the AI Risk Prediction module is kept separate through a defined service interface to maintain abstraction, cohesion, and low coupling. The design supports maintainability by allowing individual modules, database implementation, or the AI model to be changed with minimal impact on other parts of the system.
+
+### Design Documentation
+
+The complete Software Design Document is available here:
+
+- [Software Design Document](design/Software_Design_Document.pdf)
+
+### Architecture Diagram
+
+![Bandhan Software Architecture](design/architecture.png)
+
+### UI Design
+
+The six main UI screens designed for Bandhan are available in the Software Design Document and Figma prototype.
+
+- Login
+- Loan Management
+- Recovery Case Management
+- AI Risk Prediction
+- Analytics & Reports
+- Action Center
+
+The revised user interface follows a consistent Bandhan visual identity using a warm colour scheme, structured navigation, clear typography, and modular interface components across all six screens. Each screen focuses on a specific responsibility, improving cohesion and removing irrelevant information or actions. The interfaces apply abstraction by presenting meaningful business information without exposing technical implementation details, while consistent module boundaries support modularity and low coupling.
