@@ -241,7 +241,7 @@ The complete Software Design Document is available here:
 
 ### Architecture Diagram
 
-![Bandhan Software Architecture](design/architecture.png)
+![Bandhan Software Architecture](design/bandhan_architecture.png)
 
 ### UI Design
 
