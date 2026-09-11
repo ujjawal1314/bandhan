@@ -1,99 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
-const statusCards = [
-  {
-    label: "Frontend Running",
-    detail: "React + Vite",
-    icon: "◇",
-    state: "Ready",
-  },
-  {
-    label: "Backend Connected",
-    detail: "FastAPI service",
-    icon: "↗",
-    state: "Checking",
-    backend: true,
-  },
-  {
-    label: "Docker Running",
-    detail: "Container environment",
-    icon: "□",
-    state: "Ready",
-  },
-  {
-    label: "PostgreSQL Ready",
-    detail: "Database service",
-    icon: "○",
-    state: "Ready",
-  },
+const nav = [
+  ["Dashboard", "action"], ["Borrowers", "action"], ["Loan Accounts", "loans"], ["Recovery Cases", "cases"],
+  ["AI Risk Engine", "risk"], ["Analytics & Reports", "analytics"], ["Documents", "action"],
+];
+const rows = [
+  ["LN-2024-0012", "Ramesh Kumar", "₹3,50,000", "₹2,80,000", "11.5%", "14 Sep 2026", "A. Sharma", "Overdue"],
+  ["LN-2024-0034", "Priya Mehta", "₹8,00,000", "₹6,80,000", "10.2%", "22 Oct 2026", "S. Nair", "Active"],
+  ["LN-2024-0051", "Vikram Singh", "₹2,75,000", "₹2,75,000", "13.0%", "01 Sep 2026", "R. Das", "Defaulted"],
+  ["LN-2024-0078", "Anjali Desai", "₹4,20,000", "₹3,20,000", "9.8%", "30 Nov 2026", "A. Sharma", "Active"],
+  ["LN-2024-0091", "Suresh Patil", "₹1,50,000", "₹0", "12.0%", "15 Jul 2026", "M. Verma", "Closed"],
+  ["LN-2024-0103", "Kavitha Rao", "₹6,00,000", "₹4,10,000", "11.0%", "08 Sep 2026", "S. Nair", "Overdue"],
+  ["LN-2024-0119", "Mohammed Rafi", "₹3,00,000", "₹2,00,000", "10.5%", "19 Dec 2026", "R. Das", "Active"],
+  ["LN-2024-0093", "Sunita Bose", "₹9,50,000", "₹9,50,000", "14.0%", "02 Sep 2026", "M. Verma", "Defaulted"],
+];
+const cases = [
+  ["RC-00182", "Kavitha Menon", "LN-2024-0011", "S. Krishnan", "82 · High", "Field Visit", "02 Aug 2026"],
+  ["RC-00177", "Ramesh Gupta", "LN-2024-0012", "A. Sharma", "74 · High", "Notice Sent", "30 Jul 2026"],
+  ["RC-00168", "Priya Nair", "LN-2024-0014", "M. Verma", "64 · Medium", "Contacted", "28 Jul 2026"],
+  ["RC-00161", "Suresh Pillai", "LN-2024-0029", "R. Das", "91 · High", "Negotiation", "03 Aug 2026"],
+  ["RC-00154", "Anita Sharma", "LN-2024-0032", "S. Nair", "43 · Medium", "New", "29 Jul 2026"],
+  ["RC-00148", "Vijay Menon", "LN-2024-0050", "A. Sharma", "67 · Medium", "Contacted", "01 Aug 2026"],
+  ["RC-00136", "Deepa Krishnan", "LN-2024-0051", "M. Verma", "29 · Low", "Resolved", "04 Aug 2026"],
+  ["RC-00130", "Mohammed Shareef", "LN-2024-0049", "S. Krishnan", "88 · High", "Final Visit", "04 Aug 2026"],
 ];
 
-function App() {
-  const [backendReady, setBackendReady] = useState(false);
+function Button({ children, primary = false, onClick, type = "button" }) { return <button type={type} onClick={onClick} className={primary ? "button primary" : "button"}>{children}</button>; }
+function Badge({ children }) { return <span className={`badge ${String(children).toLowerCase().replaceAll(" ", "-")}`}>{children}</span>; }
+function Stat({ label, value, note, tone }) { return <article className={`stat ${tone || ""}`}><small>{label}</small><strong>{value}</strong><span>{note}</span></article>; }
+function Bars({ compact = false }) { const h = [62, 57, 65, 51, 60, 62, 58, 67, 53, 64, 72, 59, 70, 63]; return <div className={`bars ${compact ? "compact" : ""}`}>{h.map((n, i) => <i key={i} style={{ height: `${n}%` }} className={i > 10 ? "green" : ""} />)}</div>; }
 
-  useEffect(() => {
-    fetch("/api/health")
-      .then((response) => response.ok && setBackendReady(true))
-      .catch(() => setBackendReady(false));
-  }, []);
+function Sidebar({ page, setPage }) { return <aside className="sidebar"><div className="side-brand"><b>▣</b><span><strong>BANDHAN</strong><small>Loan Recovery Management</small></span></div><nav>{nav.map(([label, key]) => <button key={label} onClick={() => setPage(key)} className={page === key || (label === "Dashboard" && page === "action") ? "active" : ""}><i>◦</i>{label}</button>)}</nav><div className="side-bottom">◉ Settings<br />? Help &amp; Support</div></aside> }
+function Header({ page }) { const name = { action: "Action Center", loans: "Loan Accounts", cases: "Recovery Case Management", risk: "AI Risk Prediction", analytics: "Analytics & Reports" }[page]; return <header className="header"><div><small>Home · {name}</small><h1>{name}</h1><p>{page === "risk" ? "Analyze borrower behavior and predict recovery risk using AI." : page === "analytics" ? "Bandhan Bank · Kolkata Central Branch · Portfolio performance overview" : page === "loans" ? "Manage active loans, repayment schedules and recovery assignments." : page === "cases" ? "Track recovery cases, manage recovery actions, follow-ups, and recovery progress." : "Review tasks, alerts, and recovery activities requiring your attention."}</p></div><div className="header-actions"><Button>↻ Sync</Button><Button>♟</Button><span className="avatar">RK</span><span className="user">Rekha Doshi<small>Branch Manager ▾</small></span></div></header> }
+function Filters({ action = "Export" }) { return <div className="filters"><input placeholder="Search by Loan ID or Borrower Name" /><Button>☷ Filters</Button><Button>Sort: Due Date ↕</Button><span className="grow" /><Button>↥ {action}</Button></div> }
 
-  return (
-    <main className="app-shell">
-      <nav className="topbar" aria-label="Primary navigation">
-        <a className="brand" href="#home" aria-label="Bandhan home">
-          <span className="brand-mark">B</span>
-          <span>
-            <strong>BANDHAN</strong>
-            <small>LOAN MANAGEMENT</small>
-          </span>
-        </a>
-        <span className="review-label">REVIEW 01 · SYSTEM STATUS</span>
-      </nav>
+function LoanTable({ caseMode = false }) { const headers = caseMode ? ["Recovery ID", "Borrower", "Loan ID", "Assigned Officer", "Risk Score", "Current Stage", "Next Follow-up", "Actions"] : ["Loan ID", "Borrower", "Loan Amount", "Outstanding Amt.", "Interest Rate", "Due Date", "Assigned Officer", "Status", "Actions"]; const data = caseMode ? cases : rows; return <section className="panel table-panel"><div className="table-title"><b>{caseMode ? "Recovery Cases" : "Loan Accounts"}</b><small>Showing 1–8 of 12,874 records</small></div><div className="scroll"><table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{data.map((r, i) => <tr key={r[0]}>{r.map((v, j) => <td key={j}>{(j === r.length - 1 && !caseMode) || (caseMode && j === 5) ? <Badge>{v}</Badge> : (caseMode && j === 4) ? <span className={v.includes("High") ? "risk-high" : v.includes("Low") ? "risk-low" : "risk-med"}>{v}</span> : v}</td>)}<td><button className="dots">⋮</button></td></tr>)}</tbody></table></div><div className="pagination">Showing 1–8 of 12,874 cases <span>‹　<b>1</b>　2　3　…　329　›</span><small>Rows per page:　25⌄</small></div></section> }
 
-      <section className="hero" id="home">
-        <p className="eyebrow">LOAN RECOVERY WORKFLOW</p>
-        <h1>Bandhan</h1>
-        <p className="subtitle">
-          Intelligent Loan Recovery Workflow Management System Using AI-Based
-          Risk Prediction
-        </p>
-        <button type="button" className="login-button">Login <span>→</span></button>
-      </section>
-
-      <section className="status-section" aria-labelledby="status-heading">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">DEPLOYMENT OVERVIEW</p>
-            <h2 id="status-heading">System Status</h2>
-          </div>
-          <span className="live-indicator"><i /> Review environment</span>
-        </div>
-
-        <div className="card-grid">
-          {statusCards.map((card) => {
-            const ready = card.backend ? backendReady : true;
-            return (
-              <article className="status-card" key={card.label}>
-                <div className="card-topline">
-                  <span className="card-icon">{card.icon}</span>
-                  <span className={ready ? "badge is-ready" : "badge is-pending"}>
-                    {card.backend ? (ready ? "Connected" : card.state) : card.state}
-                  </span>
-                </div>
-                <h3>{card.label}</h3>
-                <p>{card.detail}</p>
-                <div className="status-line"><span className={ready ? "dot" : "dot pending"} /> {ready ? "Operational" : "Waiting for API"}</div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <footer>© 2026 Bandhan · Software Engineering Review 1</footer>
-    </main>
-  );
-}
-
+function ActionCenter() { const tasks = [["CRITICAL", "EMI follow-up call", "Kavitha Menon · Recovery Case RC-00182", "Due today · 11:30 AM", "Open Case"], ["HIGH", "Scheduled field visit", "Deepak Raut · Recovery Case RC-00179", "Today · 2:00 PM", "View Details"], ["HIGH", "Escalate case requires review", "Suresh Pillai · Recovery Case RC-00161", "Due today", "Review"]]; return <><div className="stats four"><Stat label="CRITICAL ALERTS" value="3" note="Immediate action needed" tone="danger"/><Stat label="DUE TODAY" value="12" note="Tasks and follow-ups"/><Stat label="FIELD VISITS" value="4" note="Scheduled today"/><Stat label="FOLLOW-UPS" value="5" note="Pending responses" tone="warning"/></div><Filters action="Mark all as Read"/><div className="two-col"><div><section className="panel task-panel"><div className="panel-heading"><b>Needs Your Attention</b><span>● 8 items requiring action or review.</span></div>{tasks.map(t => <div className="task" key={t[1]}><Badge>{t[0]}</Badge><div><b>{t[1]}</b><small>{t[2]}</small></div><span>{t[3]}</span><Button primary>{t[4]}</Button><button className="dots">⋮</button></div>)}</section><section className="panel important"><div className="panel-heading"><b>Important Alerts</b><span>Recent notifications and system events.</span></div>{["Anita Das classified as High Risk — score 78/100.", "Recovery Case RC-00182 stage updated to Field Visit.", "₹25,000 payment recorded for Sunita Deshpande."].map((x, i) => <div className="alert" key={x}><Badge>{i === 0 ? "AI Risk Engine" : i === 1 ? "Recovery Cases" : "Loan Accounts"}</Badge><span>{x}</span><small>{i === 0 ? "10 min ago" : i === 1 ? "25 min ago" : "1 hour ago"}</small><Button>{i === 1 ? "Open Case" : "View Prediction"}</Button></div>)}</section></div><aside className="right-column"><section className="panel schedule"><b>Today’s Schedule</b><p>10:30　Follow-up call<br /><small>　　Kavitha Menon</small></p><p>02:00　Field visit<br /><small>　　Deepak Raut</small></p><p>04:30　Case review<br /><small>　　RC-00179</small></p></section><section className="panel"><b>Upcoming</b><p>Tomorrow <strong>6 activities</strong></p><p>This Week <strong>18 activities</strong></p><Button>View Schedule</Button></section><section className="panel"><b>Recent Activity</b><p>● Recovery Case RC-00182 updated<br /><small>Rekha Doshi · 10:30 AM</small></p><p>● High Risk prediction generated for Anita Das</p></section></aside></div></> }
+function Loans() { return <><div className="stats four"><Stat label="TOTAL LOANS" value="12,874" note="Across all branches"/><Stat label="ACTIVE LOANS" value="9,341" note="72.6% of total"/><Stat label="OVERDUE LOANS" value="1,028" note="8.0% of total" tone="danger"/><Stat label="TOTAL OUTSTANDING" value="₹18.4 Cr" note="12.1% overdue" tone="warning"/></div><Filters action="Add New Loan"/><section className="panel chart-card"><div className="panel-heading"><div><b>Monthly Repayment Collections</b><small>Jul 2025 — Jun 2026 · 14 Lakhs</small></div><span>● Collected　○ Target　 <Button>Bar</Button> <Button>Line</Button></span></div><Bars /></section><LoanTable /></> }
+function Cases() { return <><div className="stats four"><Stat label="TOTAL RECOVERY CASES" value="3,284" note="All active cases"/><Stat label="ASSIGNED TODAY" value="142" note="New assignments"/><Stat label="PRIORITY CASES" value="891" note="Awaiting action" tone="danger"/><Stat label="RECOVERED THIS MONTH" value="₹4.2 Cr" note="Jul 2026 collections"/></div><Filters action="+ Create Recovery Case"/><div className="stage-row">Stage:　<b>All</b>　New　 Contacted　 Notice Sent　 Field Visit　 Negotiation　 Resolved　 Closed</div><div className="case-layout"><LoanTable caseMode /><CaseSide /></div></> }
+function CaseSide() { return <aside className="case-side"><h3>Case Summary</h3><b>Kavitha Menon</b><small>BR-00412 · Kolkata North branch</small><dl><dt>Recovery Case</dt><dd>RC-00182</dd><dt>Loan ID</dt><dd>LN-2024-0011</dd><dt>Outstanding</dt><dd>₹1,48,500</dd><dt>Days Overdue</dt><dd>18 days</dd><dt>Assigned Officer</dt><dd>S. Krishnan</dd></dl><div className="side-buttons"><Button>Update Stage</Button><Button>Schedule Follow-up</Button><Button>Add Note</Button><Button>Reassign Officer</Button></div><h3>Recovery Timeline</h3><p>Aug 02　● Field visit scheduled</p><p>Jul 30　● Reminder dispatched</p><p>Jul 28　● Case escalated</p><h3>Officer Notes</h3><textarea placeholder="Add a note about this case..." /><Button primary>Save Note</Button></aside> }
+function Risk() { return <><div className="risk-toolbar"><input placeholder="Search borrower..."/><Button>Model v2.4⌄</Button><Button>▣ 29 Jul 2026⌄</Button><span className="grow"/><Button>↥ Export Report</Button><Button primary>✦ Generate Prediction</Button></div><div className="stats four"><Stat label="BORROWERS EVALUATED" value="1,247" note="This fiscal year"/><Stat label="HIGH RISK BORROWERS" value="89" note="7.1% of total" tone="danger"/><Stat label="MEDIUM RISK" value="312" note="47% of total"/><Stat label="LOW RISK" value="846" note="68% of total"/></div><div className="risk-grid"><div><section className="panel borrower"><div><small>BORROWER INFORMATION</small><h3>Anita Das</h3><dl><dt>Loan ID</dt><dd>LN-2024-001</dd><dt>Loan Amount</dt><dd>₹5,00,000</dd><dt>Outstanding</dt><dd>₹4,35,000</dd><dt>Due Date</dt><dd>15 Feb 2025</dd><dt>Assigned Officer</dt><dd>Suresh Kumar</dd></dl></div><div className="gauge"><strong>78</strong><small>/100</small><b>High Risk</b><span>Confidence: 91%</span></div></section><section className="panel"><small>PREDICTION SUMMARY</small><p>Risk Classification　 <b className="red">HIGH RISK</b></p><p>Risk Score　　　　　<b>78 /100</b></p><p>Confidence　　　　　<b>91%</b></p><p>Prediction Date　　　<b>29 Jul 2026</b></p></section></div><div><section className="panel explanation"><small>PREDICTION EXPLANATION</small><p><b>The model classifies Anita Das as High Risk</b> based on a combination of consecutive missed EMI payments, a high outstanding-to-disbursed ratio, and declining income stability signals.</p><small>KEY RISK FACTORS</small>{[["Payment History", "85%"], ["Outstanding Amount", "81%"], ["Income Stability", "73%"], ["Credit Behaviour", "61%"], ["Employment Stability", "55%"], ["Previous Defaults", "40%"]].map(([a,b]) => <div className="factor" key={a}><span>{a}</span><i><b style={{width:b}} /></i><em>{b}</em></div>)}</section><section className="panel notes"><b>OFFICER NOTES</b><textarea placeholder="Add notes about this borrower..."/><div><Button>◫ Open Recovery Case</Button><Button>⌁ Record Follow-up</Button><Button primary>Save Note</Button></div></section></div><div><section className="panel mini-chart"><small>RISK SCORE TREND</small><p>3-month risk score history · Anita Das</p><svg viewBox="0 0 260 105"><path d="M10 85 L70 72 L125 61 L185 46 L245 38" fill="none" stroke="#d63b32" strokeWidth="3"/><circle cx="245" cy="38" r="4" fill="#d63b32"/></svg><b>↑ Consistently rising · +16pts over 12 months</b></section><section className="panel"><small>PREDICTION CONFIDENCE</small><h2 className="green-text">91%</h2><div className="confidence"><i /></div><p>High confidence — prediction is reliable.</p></section><section className="panel donut"><small>PORTFOLIO RISK DISTRIBUTION</small><div>1247</div><p>● High Risk　89</p><p>● Medium Risk　312</p><p>● Low Risk　846</p></section></div></div></> }
+function Analytics() { return <><div className="risk-toolbar"><Button>FY 2024-25⌄</Button><Button>All Branches⌄</Button><Button>All Loan Types⌄</Button><Button>Monthly⌄</Button><span className="grow"/><Button primary>↥ Export Report</Button></div><div className="stats four"><Stat label="TOTAL DISBURSED" value="₹2,84,50,000" note="FY 2024-25 · 1,247 loans"/><Stat label="TOTAL RECOVERED" value="₹1,92,30,000" note="67.6% of disbursed"/><Stat label="RECOVERY RATE" value="67.6%" note="Target: 75.0% · 7.4pts short" tone="warning"/><Stat label="OVERDUE PORTFOLIO" value="₹48,75,000" note="17.1% of outstanding" tone="danger"/></div><div className="analytics-grid"><section className="panel recovery-chart"><div className="panel-heading"><div><b>Recovery Trend</b><small>Monthly recovery rate · Jul 2024 — Jun 2025</small></div><Button>Bar</Button></div><Bars /></section><section className="panel small-bars"><b>Loan Performance</b><small>Disbursed vs. Recovered · ₹ Lakhs</small><Bars compact /></section><section className="panel donut portfolio"><b>Portfolio Health</b><div>68<br/><small>NORMAL</small></div><p>Recovery　67.6%</p><p>Target　　75.0%</p><p>Gap　　　−7.4pp</p></section><section className="panel branch"><b>Branch Performance</b>{[["Kolkata Central", "82%"], ["Delhi North", "74%"], ["Mumbai Central", "71%"], ["Bangalore East", "68%"]].map(([a,b]) => <p key={a}>{a}<span>{b}</span><i><b style={{width:b}} /></i></p>)}</section><section className="panel reports"><b>Scheduled Reports</b><p><strong>Weekly Portfolio Summary</strong><br/>Every Monday<br/><small>Last run: 28 Jul 2025</small></p><p><strong>Monthly Recovery Report</strong><br/>1st of Month<br/><small>Last run: 01 Aug 2025</small></p></section><section className="panel report-table"><b>Monthly Recovery Report</b><table><thead><tr><th>MONTH</th><th>LOANS DISBURSED</th><th>AMOUNT DISBURSED</th><th>RECOVERY RATE</th></tr></thead><tbody>{["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((x,i) => <tr key={x}><td>{x}<small>2025</small></td><td>{142+i*3}</td><td>₹{29+i},4L</td><td><Badge>{i > 3 ? "78.6%" : "70.1%"}</Badge></td></tr>)}</tbody></table></section></div></> }
+function Login({ setPage }) { const signIn = (event) => { event.preventDefault(); setPage("action"); }; return <main className="login-page"><section className="login-card"><div className="login-panel"><div className="login-brand">▣　<b>BANDHAN</b><small>LOAN MANAGEMENT</small></div><h1>Stronger<br/>Recoveries.<br/><em>Brighter Tomorrows.</em></h1><p>A unified platform for smarter loan recovery management, powered by data and trust.</p><ul><li>▥　<b>Data-Driven Insights</b><small>Track performance and identify risks</small></li><li>♧　<b>Efficient Workflows</b><small>Streamline recovery processes</small></li><li>⬡　<b>Greater Financial Inclusion</b><small>Support borrowers, build stronger communities</small></li></ul><footer>People　|　Process　|　Progress</footer></div><form className="signin" onSubmit={signIn}><span className="help">Need help?　?</span><div><small>WELCOME TO BANDHAN</small><h2>Sign in to your account</h2><p>Access your dashboard and manage recovery operations.</p><label>Username<input required placeholder="♙　 Enter your username" /></label><label>Password<input required type="password" placeholder="♧　 Enter your password" /></label><Button primary type="submit">Sign In　→</Button><p className="links">Create account <span>Forgot password?</span></p></div><footer>Secure Access　|　 Trusted Operations　|　 Stronger Communities</footer></form></section></main> }
+function App() { const [page, setPage] = useState("login"); if (page === "login") return <Login setPage={setPage} />; const content = { action: <ActionCenter />, loans: <Loans />, cases: <Cases />, risk: <Risk />, analytics: <Analytics /> }[page]; return <div className="dashboard"><Sidebar page={page} setPage={setPage}/><main className="workspace"><Header page={page}/>{content}</main></div> }
 createRoot(document.getElementById("root")).render(<App />);
