@@ -1,7 +1,7 @@
 """
 Compatibility wrapper for the borrower-health engine.
 
-The old project exposed a Neo4j-specific detector entry point. SatarkSetu now
+The old project exposed a Neo4j-specific detector entry point. Bandhan now
 uses a borrower-health scoring engine that does not require Neo4j for the MVP,
 but this wrapper keeps the import path stable for the rest of the codebase.
 """

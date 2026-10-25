@@ -14,6 +14,8 @@ import pandas as pd
 from api_models import BorrowerActionRequest, InterventionSimulationRequest
 from detection_engine import SatarkSetuDetector
 from repositories import BorrowerRepository
+from pipeline import compute_risk_score, risk_band, recovery_action
+from model import RiskNet
 
 
 try:
@@ -22,6 +24,7 @@ try:
     load_dotenv()
 except ImportError:
     pass
+
 
 
 app = FastAPI(title="SatarkSetu - Borrower Health Backend")
@@ -96,9 +99,15 @@ def root():
         "status": "active",
         "version": "2.0",
         "endpoints": {
+            "health": "/health",
             "stats": "/stats",
             "borrowers": "/borrowers",
             "borrower_analysis": "/borrowers/{borrower_id}",
+            "analyze": "/analyze/{borrower_id}",
+            "narrative": "/narrative/{borrower_id}",
+            "explain": "/explain/{borrower_id}",
+            "update_status": "POST /update-status/{borrower_id}",
+            "portfolio_summary": "/portfolio/summary",
             "stress_clusters": "/clusters",
             "graph_stats": "/graph/stats",
             "support_action": "POST /borrowers/{borrower_id}/support",
@@ -107,6 +116,7 @@ def root():
             "stream": "/stream",
         },
     }
+
 
 
 @app.get("/stats")
@@ -266,8 +276,277 @@ async def websocket_endpoint(websocket: WebSocket):
             active_connections.remove(websocket)
 
 
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "model": "RiskNet loaded"}
+
+
+@app.get("/analyze/{borrower_id}")
+def analyze_borrower(borrower_id: str):
+    """
+    Run AI risk analysis for a single borrower.
+    Called when user clicks 'AI Risk Analysis' button.
+    """
+    row = borrower_df[borrower_df["borrower_id"] == borrower_id]
+    if row.empty:
+        raise HTTPException(status_code=404, detail=f"Borrower {borrower_id} not found")
+
+    borrower = row.iloc[0].to_dict()
+    numeric_fields = [
+        'loan_amount', 'outstanding_amount', 'emi_amount',
+        'avg_monthly_inflow', 'avg_monthly_outflow', 'current_balance',
+        'repayment_consistency', 'inflow_stability', 'balance_trend',
+        'missed_payments_90d', 'days_past_due', 'peer_score',
+        'regional_stress_factor'
+    ]
+    for field in numeric_fields:
+        val = borrower.get(field)
+        if val is None or pd.isna(val):
+            borrower[field] = 0.0
+
+    borrower_txns = txn_df[txn_df["borrower_id"] == borrower_id]
+    transactions = borrower_txns.to_dict("records") if not borrower_txns.empty else []
+
+    reg_rows = regional_df[regional_df["region"] == borrower.get("region", "")]
+    regional = reg_rows.iloc[0].to_dict() if not reg_rows.empty else {}
+
+    probability = compute_risk_score(borrower, transactions, regional)
+    band = risk_band(probability)
+    action = recovery_action(probability)
+
+    emi_txns = [t for t in transactions if t.get('transaction_type') == 'EMI_PAYMENT']
+    miss_rate = sum(1 for t in emi_txns if t.get('status') == 'MISSED') / (len(emi_txns) or 1)
+
+    return {
+        "borrower_id": borrower_id,
+        "name": borrower.get("name", "Unknown"),
+        "region": borrower.get("region", "Unknown"),
+        "loan_scheme": borrower.get("loan_scheme", "Unknown"),
+        "loan_amount": float(borrower.get("loan_amount", 0)),
+        "outstanding_amount": float(borrower.get("outstanding_amount", 0)),
+        "missed_payments": int(borrower.get("missed_payments_90d", 0)),
+        "days_past_due": int(borrower.get("days_past_due", 0)),
+        "risk_probability": round(probability, 4),
+        "risk_band": band,
+        "recovery_action": action,
+        "key_signals": {
+            "repayment_consistency": round(float(borrower.get("repayment_consistency", 0)), 2),
+            "peer_score": round(float(borrower.get("peer_score", 0)), 1),
+            "regional_stress": round(float(borrower.get("regional_stress_factor", 0)), 2),
+            "txn_miss_rate": round(float(miss_rate if miss_rate > 0 else borrower.get("missed_payments_90d", 0) / 6.0), 3),
+            "buffer_ratio": round(float(borrower.get("current_balance", 0) / (borrower.get("emi_amount", 1) + 1)), 2),
+            "inflow_stability": round(float(borrower.get("inflow_stability", 0)), 2),
+            "days_past_due": int(borrower.get("days_past_due", 0)),
+        }
+    }
+
+
+@app.get("/narrative/{borrower_id}")
+def get_narrative(borrower_id: str):
+    row = borrower_df[borrower_df["borrower_id"] == borrower_id]
+    if row.empty:
+        raise HTTPException(status_code=404, detail=f"Borrower {borrower_id} not found")
+
+    borrower = row.iloc[0].to_dict()
+    for field in [
+        'loan_amount', 'outstanding_amount', 'emi_amount',
+        'avg_monthly_inflow', 'avg_monthly_outflow', 'current_balance',
+        'repayment_consistency', 'inflow_stability', 'balance_trend',
+        'missed_payments_90d', 'days_past_due', 'peer_score',
+        'regional_stress_factor'
+    ]:
+        val = borrower.get(field)
+        if val is None or pd.isna(val):
+            borrower[field] = 0.0
+
+    borrower_txns = txn_df[txn_df["borrower_id"] == borrower_id]
+    transactions = borrower_txns.to_dict("records") if not borrower_txns.empty else []
+
+    reg_rows = regional_df[regional_df["region"] == borrower.get("region", "")]
+    regional = reg_rows.iloc[0].to_dict() if not reg_rows.empty else {}
+
+    probability = compute_risk_score(borrower, transactions, regional)
+    band = risk_band(probability)
+
+    missed = int(borrower.get('missed_payments_90d', 0))
+    dpd    = int(borrower.get('days_past_due', 0))
+    region = borrower.get('region', 'the region')
+    scheme = borrower.get('loan_scheme', 'the scheme')
+    stress = float(borrower.get('regional_stress_factor', 0.5))
+    peer   = float(borrower.get('peer_score', 80))
+    repay  = float(borrower.get('repayment_consistency', 0.8))
+
+    action_label = recovery_action(probability)
+    next_step = (
+        "Immediate outreach is advised to prevent NPA formation."
+        if probability >= 0.60
+        else "Monitor closely over the next 30 days for further deterioration signals."
+        if probability >= 0.40
+        else "Standard portfolio review protocols apply."
+    )
+
+    narrative = f"""
+Borrower Risk Assessment — {band} Risk ({probability*100:.1f}%)
+
+This borrower has recorded {missed} missed payment(s) in the last 90 days with {dpd} days past due, indicating {"significant" if missed >= 2 else "moderate" if missed == 1 else "minimal"} repayment stress. Their repayment consistency score of {repay:.2f} {"falls below" if repay < 0.75 else "is within"} the acceptable threshold.
+
+The borrower operates under the {scheme} scheme in {region}, which carries a regional stress factor of {stress:.2f}. Their peer score of {peer:.0f} {"is below" if peer < 78 else "is in line with"} the regional cohort baseline, {"suggesting elevated peer-level credit stress in this segment" if peer < 78 else "suggesting stable peer-level performance"}.
+
+Recommended Action: {action_label}. {next_step}
+    """.strip()
+
+    return {"narrative": narrative}
+
+
+@app.get("/explain/{borrower_id}")
+def explain_borrower(borrower_id: str):
+    """
+    Returns feature contribution breakdown for explainability chart.
+    """
+    row = borrower_df[borrower_df["borrower_id"] == borrower_id]
+    if row.empty:
+        raise HTTPException(status_code=404, detail=f"Borrower {borrower_id} not found")
+
+    borrower = row.iloc[0].to_dict()
+    for field in [
+        'loan_amount', 'outstanding_amount', 'emi_amount',
+        'avg_monthly_inflow', 'avg_monthly_outflow', 'current_balance',
+        'repayment_consistency', 'inflow_stability', 'balance_trend',
+        'missed_payments_90d', 'days_past_due', 'peer_score',
+        'regional_stress_factor'
+    ]:
+        val = borrower.get(field)
+        if val is None or pd.isna(val):
+            borrower[field] = 0.0
+
+    borrower_txns = txn_df[txn_df["borrower_id"] == borrower_id]
+    transactions = borrower_txns.to_dict("records") if not borrower_txns.empty else []
+
+    missed     = float(borrower.get('missed_payments_90d', 0))
+    dpd        = float(borrower.get('days_past_due', 0))
+    repayment  = float(borrower.get('repayment_consistency', 0.8))
+    stress     = float(borrower.get('regional_stress_factor', 0.5))
+    peer       = float(borrower.get('peer_score', 80))
+    inflow_st  = float(borrower.get('inflow_stability', 0.8))
+
+    emi_txns = [t for t in transactions if t.get('transaction_type') == 'EMI_PAYMENT']
+    total = len(emi_txns) if emi_txns else 1
+    miss_rate = sum(1 for t in emi_txns if t.get('status') == 'MISSED') / total
+    delay_rate = sum(1 for t in emi_txns if t.get('status') == 'DELAYED') / total
+
+    contributions = {
+        "Missed Payments (90d)": round(min(missed / 4.0, 1.0) * 0.30, 4),
+        "Days Past Due":         round(min(dpd / 90.0, 1.0) * 0.25, 4),
+        "EMI Miss Rate":         round(miss_rate * 0.15, 4),
+        "EMI Delay Rate":        round(delay_rate * 0.10, 4),
+        "Repayment Consistency": round((1 - repayment) * 0.10, 4),
+        "Regional Stress":       round(stress * 0.05, 4),
+        "Peer Score Gap":        round((1 - peer / 100.0) * 0.03, 4),
+        "Inflow Instability":    round((1 - inflow_st) * 0.02, 4),
+    }
+
+    total_risk = sum(contributions.values()) or 1
+    percentages = {
+        k: round((v / total_risk) * 100, 1)
+        for k, v in contributions.items()
+    }
+    sorted_contributions = dict(
+        sorted(percentages.items(), key=lambda x: x[1], reverse=True)
+    )
+    top_driver = max(contributions, key=contributions.get)
+
+    return {
+        "borrower_id": borrower_id,
+        "feature_contributions": sorted_contributions,
+        "raw_contributions": {k: round(v, 4) for k, v in contributions.items()},
+        "top_driver": top_driver,
+        "total_risk_score": round(total_risk, 4),
+        "explanation_summary": (
+            f"The primary driver of risk for this borrower is {top_driver}, "
+            f"contributing {sorted_contributions[top_driver]:.1f}% of the total risk score."
+        )
+    }
+
+
+@app.post("/update-status/{borrower_id}")
+def update_borrower_status(borrower_id: str, payload: dict):
+    """
+    Updates borrower status in repository.
+    payload: { "status": "SUPPORT_REQUIRED" } or { "status": "RECOVERING" }
+    """
+    new_status = payload.get("status")
+    if new_status not in ["ACTIVE", "SUPPORT_REQUIRED", "RECOVERING", "WATCHLIST"]:
+        raise HTTPException(status_code=400, detail=f"Invalid status: {new_status}")
+
+    row = borrower_df[borrower_df["borrower_id"] == borrower_id]
+    if row.empty:
+        raise HTTPException(status_code=404, detail=f"Borrower {borrower_id} not found")
+
+    repo.set_status(
+        borrower_id,
+        status=new_status,
+        reason=payload.get("reason", "Status updated via API"),
+        performed_by=payload.get("performed_by", "dashboard"),
+    )
+
+    return {
+        "success": True,
+        "borrower_id": borrower_id,
+        "new_status": new_status,
+        "message": f"Status updated to {new_status}",
+    }
+
+
+@app.get("/portfolio/summary")
+def portfolio_summary():
+    """
+    Returns risk band distribution across all borrowers.
+    Used for dashboard overview.
+    """
+    records = []
+    bands = {"CRITICAL": [], "HIGH": [], "MODERATE": [], "LOW": []}
+    at_risk_exposure = 0.0
+
+    reg_lookup = {r["region"]: r for r in regional_df.to_dict("records")}
+
+    for _, row in borrower_df.iterrows():
+        b = row.to_dict()
+        b_id = b["borrower_id"]
+        b_txns = txn_df[txn_df["borrower_id"] == b_id].to_dict("records")
+        regional = reg_lookup.get(b.get("region", ""), {})
+
+        prob = compute_risk_score(b, b_txns, regional)
+        band = risk_band(prob)
+        action = recovery_action(prob)
+
+        out_amt = float(b.get("outstanding_amount", 0.0) or 0.0)
+        record = {
+            "borrower_id": b_id,
+            "name": b.get("name", ""),
+            "region": b.get("region", ""),
+            "risk_band": band,
+            "risk_probability": prob,
+            "outstanding_amount": out_amt,
+            "recovery_action": action,
+        }
+        records.append(record)
+        if band in bands:
+            bands[band].append(record)
+        if band in ["CRITICAL", "HIGH"]:
+            at_risk_exposure += out_amt
+
+    return {
+        "total_borrowers": len(records),
+        "band_counts": {k: len(v) for k, v in bands.items()},
+        "at_risk_exposure": round(at_risk_exposure, 2),
+        "borrowers": records,
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
 
     print("🚀 Starting SatarkSetu Borrower Health Backend...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

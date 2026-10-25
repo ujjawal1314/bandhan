@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo Starting Neo4j for SatarkSetu
+echo Starting Neo4j for Bandhan
 echo ========================================
 echo.
 

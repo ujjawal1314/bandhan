@@ -1,5 +1,5 @@
 """
-SatarkSetu — Feature Engineering
+Bandhan — Feature Engineering
 Transforms raw borrower + transaction + regional data into model input
 """
 
@@ -83,6 +83,52 @@ def engineer_features(borrower: dict, transactions: list, regional: dict) -> lis
     return [float(f) for f in features]
 
 
+def compute_risk_score(borrower: dict, transactions: list, regional: dict) -> float:
+    # EMI behaviour from transactions
+    emi_txns = [t for t in transactions if t.get('transaction_type') == 'EMI_PAYMENT']
+    total = len(emi_txns) if emi_txns else 1
+    miss_rate = sum(1 for t in emi_txns if t.get('status') == 'MISSED') / total
+    delay_rate = sum(1 for t in emi_txns if t.get('status') == 'DELAYED') / total
+
+    def _val(v, default):
+        if v is None:
+            return default
+        try:
+            val = float(v)
+            return default if np.isnan(val) else val
+        except (ValueError, TypeError):
+            return default
+
+    # Core risk signal — weighted combination of real features
+    repayment  = _val(borrower.get('repayment_consistency'), 0.8)
+    missed     = _val(borrower.get('missed_payments_90d'), 0.0)
+    dpd        = _val(borrower.get('days_past_due'), 0.0)
+    peer       = _val(borrower.get('peer_score'), 80.0)
+    stress     = _val(borrower.get('regional_stress_factor'), 0.5)
+    inflow_st  = _val(borrower.get('inflow_stability'), 0.8)
+
+    # Normalise days past due to 0-1
+    dpd_norm = min(dpd / 90.0, 1.0)
+    # Normalise missed payments to 0-1
+    missed_norm = min(missed / 4.0, 1.0)
+    # Peer score — lower is riskier, normalise inverted
+    peer_norm = 1.0 - (peer / 100.0)
+
+    # Weighted risk score
+    risk = (
+        missed_norm    * 0.30 +
+        dpd_norm       * 0.25 +
+        miss_rate      * 0.15 +
+        delay_rate     * 0.10 +
+        (1 - repayment)* 0.10 +
+        stress         * 0.05 +
+        peer_norm      * 0.03 +
+        (1 - inflow_st)* 0.02
+    )
+
+    return round(float(min(max(risk, 0.0), 1.0)), 4)
+
+
 def risk_band(probability: float) -> str:
     if probability >= 0.60:   return 'CRITICAL'
     elif probability >= 0.40: return 'HIGH'
@@ -99,3 +145,4 @@ def recovery_action(probability: float) -> str:
         return 'Soft Alert: Relationship Manager Check-in'
     else:
         return 'Monitor: Standard Portfolio Review'
+

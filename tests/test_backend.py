@@ -99,6 +99,68 @@ class TestBackendAPI:
         assert "events" in data
         assert isinstance(data["events"], list)
 
+    def test_health_endpoint(self):
+        response = client.get("/health")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "ok"
+
+    def test_analyze_endpoint_valid(self):
+        response = client.get(f"/analyze/{KNOWN_BORROWER}")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["borrower_id"] == KNOWN_BORROWER
+        assert "risk_probability" in data
+        assert "risk_band" in data
+        assert "recovery_action" in data
+        assert "key_signals" in data
+
+    def test_analyze_endpoint_invalid(self):
+        response = client.get("/analyze/BORR_NONEXISTENT")
+        assert response.status_code == 404
+
+    def test_narrative_endpoint(self):
+        response = client.get(f"/narrative/{KNOWN_BORROWER}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "narrative" in data
+        assert len(data["narrative"]) > 0
+
+    def test_explain_endpoint(self):
+        response = client.get(f"/explain/{KNOWN_BORROWER}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "feature_contributions" in data
+        assert "top_driver" in data
+        assert "explanation_summary" in data
+
+    def test_update_status_endpoint(self):
+        response = client.post(
+            f"/update-status/{KNOWN_BORROWER}",
+            json={"status": "SUPPORT_REQUIRED"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["new_status"] == "SUPPORT_REQUIRED"
+
+    def test_update_status_invalid_status(self):
+        response = client.post(
+            f"/update-status/{KNOWN_BORROWER}",
+            json={"status": "INVALID_STATUS"},
+        )
+        assert response.status_code == 400
+
+    def test_portfolio_summary_endpoint(self):
+        response = client.get("/portfolio/summary")
+        assert response.status_code == 200
+        data = response.json()
+        assert "total_borrowers" in data
+        assert "band_counts" in data
+        assert "at_risk_exposure" in data
+        assert "borrowers" in data
+
+
 
 @pytest.mark.slow
 class TestBackendPerformance:

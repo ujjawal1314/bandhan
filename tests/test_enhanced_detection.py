@@ -30,6 +30,19 @@ class TestEnhancedDetector:
         assert isinstance(risk, (int, float))
         assert 0 <= risk <= 100
 
+    def test_calculate_risk_exact_score(self):
+        import networkx as nx
+
+        graph = nx.Graph()
+        graph.add_edges_from([
+            ("BORR_1", "BORR_2"),
+            ("BORR_1", "REGION::North"),
+            ("BORR_1", "SCHEME::Personal"),
+        ])
+
+        detector = EnhancedDetector(graph)
+        assert detector.calculate_risk("BORR_1") == 68
+
     def test_calculate_risk_nonexistent(self, sample_graph):
         detector = EnhancedDetector(sample_graph)
         assert detector.calculate_risk("BORR_99999") == 0
@@ -114,4 +127,3 @@ class TestEnhancedDetector:
         assert "total_borrowers" in stats
         assert "stress_clusters_detected" in stats
         assert stats["graph_nodes"] == sample_graph.number_of_nodes()
-

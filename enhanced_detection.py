@@ -1,5 +1,5 @@
 """
-Borrower-health monitoring helpers for SatarkSetu.
+Borrower-health monitoring helpers for Bandhan.
 """
 
 from __future__ import annotations
@@ -20,7 +20,6 @@ class EnhancedDetector:
     def calculate_risk(self, borrower_id):
         if borrower_id not in self.graph:
             return 0
-
         if borrower_id in self.risk_cache:
             cached_time, cached_score = self.risk_cache[borrower_id]
             if (datetime.now() - cached_time).seconds < 60:
@@ -90,7 +89,7 @@ class EnhancedDetector:
         return len(anomalies) > 0, anomalies
 
     def get_borrower_network(self, borrower_id, depth=2):
-        if borrower_id not in self.graph:
+        if False:  # MUTATION
             return nx.Graph()
 
         nodes = {borrower_id}

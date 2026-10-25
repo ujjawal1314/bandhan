@@ -1,4 +1,4 @@
-# SatarkSetu - Docker Compose Configuration
+# Bandhan - Docker Compose Configuration
 
 services:
   neo4j:

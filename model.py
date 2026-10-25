@@ -1,5 +1,5 @@
 """
-SatarkSetu — RiskNet Model Definition
+Bandhan — RiskNet Model Definition
 Loads trained weights and runs inference
 """
 

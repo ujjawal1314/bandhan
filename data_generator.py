@@ -42,6 +42,38 @@ def build_regional_context() -> pd.DataFrame:
     return pd.read_csv("regional_context.csv")
 
 
+BRANCH_MAPPING = {
+    "Jharkhand": "Ranchi Main Branch",
+    "West Bengal": "Kolkata Park Street Branch",
+    "Bihar": "Patna Main Branch",
+    "Odisha": "Bhubaneswar Rajpath Branch",
+    "Maharashtra": "Mumbai Fort Branch",
+    "Uttar Pradesh": "Lucknow Hazratganj Branch",
+    "Rajasthan": "Jaipur MI Road Branch",
+    "Madhya Pradesh": "Bhopal Arera Colony Branch",
+    "Gujarat": "Ahmedabad Ashram Road Branch",
+    "Tamil Nadu": "Chennai Anna Salai Branch",
+    "Karnataka": "Bengaluru MG Road Branch",
+    "Andhra Pradesh": "Vijayawada MG Road Branch",
+    "Telangana": "Hyderabad Gachibowli Branch",
+    "Kerala": "Kochi MG Road Branch",
+    "Punjab": "Chandigarh Sector 17 Branch",
+    "Haryana": "Gurugram Cyber City Branch",
+    "Delhi": "Delhi Connaught Place Branch",
+    "Assam": "Guwahati GS Road Branch",
+    "Chhattisgarh": "Raipur GE Road Branch",
+    "Uttarakhand": "Dehradun Rajpur Road Branch",
+    "Himachal Pradesh": "Shimla Mall Road Branch",
+    "Jammu and Kashmir": "Srinagar Residency Road Branch",
+    "Goa": "Panaji Main Branch",
+    "Tripura": "Agartala H.G.B. Road Branch",
+    "Meghalaya": "Shillong Police Bazar Branch",
+    "Manipur": "Imphal Main Branch",
+    "Nagaland": "Kohima Main Branch",
+    "Sikkim": "Gangtok MG Marg Branch"
+}
+
+
 def build_borrowers(regional_df: pd.DataFrame, n_borrowers: int = 420) -> pd.DataFrame:
     regional_lookup = regional_df.set_index("region").to_dict("index")
     borrowers = []
@@ -70,10 +102,20 @@ def build_borrowers(regional_df: pd.DataFrame, n_borrowers: int = 420) -> pd.Dat
         outstanding_ratio = min(0.96, max(0.24, 0.88 - repayment_consistency * 0.22 + latent_stress * 0.18))
         outstanding_amount = round(loan_amount * outstanding_ratio, 2)
 
+        first_name = random.choice(FIRST_NAMES)
+        last_name = random.choice(LAST_NAMES)
+        name = f"{first_name} {last_name}"
+        email = f"{first_name.lower()}.{last_name.lower()}{random.randint(10,99)}@gmail.com"
+        mobile_number = f"+91 {random.choice(['98', '99', '97', '96', '88', '89'])}{random.randint(10000000, 99999999)}"
+        branch = BRANCH_MAPPING.get(region, f"{region} Main Branch")
+
         borrowers.append(
             {
                 "borrower_id": borrower_id,
-                "name": f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}",
+                "name": name,
+                "email": email,
+                "mobile_number": mobile_number,
+                "branch": branch,
                 "loan_scheme": scheme,
                 "borrower_category": category,
                 "region": region,
@@ -171,7 +213,7 @@ if __name__ == "__main__":
     borrowers_df.to_csv("borrowers.csv", index=False)
     transactions_df.to_csv("loan_transactions.csv", index=False)
 
-    print("✅ SatarkSetu demo data generated.")
+    print("✅ Bandhan demo data generated.")
     print(f"   Borrowers: {len(borrowers_df):,}")
     print(f"   Transactions: {len(transactions_df):,}")
     print(f"   Regions: {len(regional_df):,}")

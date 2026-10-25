@@ -1,5 +1,5 @@
 """
-SatarkSetu — AI Early Warning Credit Intelligence Platform
+Bandhan — AI Early Warning Credit Intelligence Platform
 Full ML Pipeline: Feature Engineering + RiskNet Training + Scored Output
 Uses: scikit-learn MLPClassifier (Neural Network) + StandardScaler
 """
@@ -17,7 +17,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 print("=" * 60)
-print("  SatarkSetu — RiskNet ML Pipeline")
+print("  Bandhan — RiskNet ML Pipeline")
 print("=" * 60)
 
 # ─────────────────────────────────────────────
@@ -244,5 +244,5 @@ print(output[cols].head(10).to_string())
 
 print(f"\n    ✅ Output → {output_path}")
 print("\n" + "=" * 60)
-print("  SatarkSetu Pipeline Complete")
+print("  Bandhan Pipeline Complete")
 print("=" * 60)

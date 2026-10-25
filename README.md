@@ -1,12 +1,12 @@
-# SatarkSetu
+# Bandhan
 
-SatarkSetu is an AI-powered early warning and recovery platform for Indian Bank's MSME and government-scheme loan portfolios. The system is designed to identify borrower financial stress before loan default occurs by combining behavioral signals, peer benchmarking, and regional stress indicators into a contextual risk view.
+Bandhan is an AI-powered early warning and recovery platform for Indian Bank's MSME and government-scheme loan portfolios. The system is designed to identify borrower financial stress before loan default occurs by combining behavioral signals, peer benchmarking, and regional stress indicators into a contextual risk view.
 
 This repository packages the MVP as a Python and Streamlit application with supporting backend services, datasets, and documentation. The goal is to help developers, judges, and collaborators understand how the platform works end to end and how the current codebase maps to that architecture.
 
 ## Project Overview
 
-SatarkSetu introduces the Continuous Borrower Health Model (CBHM), a custom intelligence layer that estimates borrower health using repayment behavior, balance trends, transaction stability, cohort comparisons, and geographic loan stress signals.
+Bandhan introduces the Continuous Borrower Health Model (CBHM), a custom intelligence layer that estimates borrower health using repayment behavior, balance trends, transaction stability, cohort comparisons, and geographic loan stress signals.
 
 The platform is built to help banks:
 
@@ -17,7 +17,7 @@ The platform is built to help banks:
 - Prioritize recovery actions using contextual intelligence
 - Provide transparent health insights to borrowers
 
-SatarkSetu shifts loan recovery from reactive enforcement to proactive financial assistance.
+Bandhan shifts loan recovery from reactive enforcement to proactive financial assistance.
 
 ## Technology Stack
 
@@ -56,7 +56,7 @@ SatarkSetu shifts loan recovery from reactive enforcement to proactive financial
 
 ## System Architecture
 
-SatarkSetu can be understood as a layered system.
+Bandhan can be understood as a layered system.
 
 ### 1. Data Layer
 
@@ -202,7 +202,7 @@ This helps determine whether a borrower is an outlier or simply tracking normal 
 
 ### Regional Risk Context
 
-Regional NPA trends and economic pressure indicators adjust interpretation of borrower risk. For example, if one state shows structurally higher MSME loan stress than another, SatarkSetu can avoid over-penalizing borrowers whose weaker patterns reflect regional conditions rather than borrower-specific breakdown.
+Regional NPA trends and economic pressure indicators adjust interpretation of borrower risk. For example, if one state shows structurally higher MSME loan stress than another, Bandhan can avoid over-penalizing borrowers whose weaker patterns reflect regional conditions rather than borrower-specific breakdown.
 
 This reduces false alarms and improves recovery prioritization.
 
@@ -276,7 +276,7 @@ These visual signals let bank officers identify deterioration quickly and consis
 
 ## Demo Workflow
 
-The demo story for SatarkSetu is:
+The demo story for Bandhan is:
 
 1. Load the borrower portfolio dashboard
 2. Select a borrower from a stressed region or scheme
@@ -316,7 +316,7 @@ Docker assets are included for teams that want a packaged local or demo deployme
 ## Project Structure
 
 ```text
-satarksetu/
+bandhan/
 ├── backend/                 # Service and processing logic
 ├── dashboard/               # Streamlit UI and presentation components
 ├── data/                    # Borrower and regional datasets
@@ -325,11 +325,11 @@ satarksetu/
 └── tests/                   # Validation and regression coverage
 ```
 
-The current repository contains legacy hackathon implementation files as well as the newer SatarkSetu positioning and documentation. As the product evolves, the folder layout can be normalized toward the structure above.
+The current repository contains legacy hackathon implementation files as well as the newer Bandhan positioning and documentation. As the product evolves, the folder layout can be normalized toward the structure above.
 
 ## Goal of the System
 
-SatarkSetu aims to:
+Bandhan aims to:
 
 - Detect loan repayment stress early
 - Reduce NPAs in PSU banking portfolios

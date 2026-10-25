@@ -2,7 +2,7 @@
 Smoke test for dashboard integration.
 """
 
-print("Testing SatarkSetu dashboard integration...\n")
+print("Testing Bandhan dashboard integration...\n")
 
 try:
     from dashboard_enhanced import initialize_detector, load_data

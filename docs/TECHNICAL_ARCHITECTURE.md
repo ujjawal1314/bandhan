@@ -1,12 +1,12 @@
-# SatarkSetu Technical Architecture
+# Bandhan Technical Architecture
 
 ## Purpose
 
-This document explains the SatarkSetu architecture from end to end for developers, judges, and collaborators. It is written as a high-level technical reference for the current MVP direction: borrower health monitoring, contextual risk scoring, and early loan-stress detection.
+This document explains the Bandhan architecture from end to end for developers, judges, and collaborators. It is written as a high-level technical reference for the current MVP direction: borrower health monitoring, contextual risk scoring, and early loan-stress detection.
 
 ## 1. Project Overview
 
-SatarkSetu is an AI-powered early warning and recovery platform for Indian Bank's MSME and government-scheme loan portfolios. The system focuses on borrower distress detection before default rather than post-default enforcement. It combines behavioral signals, peer context, and regional stress information to produce a more useful operational risk view.
+Bandhan is an AI-powered early warning and recovery platform for Indian Bank's MSME and government-scheme loan portfolios. The system focuses on borrower distress detection before default rather than post-default enforcement. It combines behavioral signals, peer context, and regional stress information to produce a more useful operational risk view.
 
 The central intelligence concept is the Continuous Borrower Health Model (CBHM).
 
@@ -228,7 +228,7 @@ Docker can be used to package the dashboard and backend for demos or internal re
 
 ## 12. System Goal
 
-SatarkSetu is intended to:
+Bandhan is intended to:
 
 - Detect repayment stress early
 - Reduce NPAs in PSU loan portfolios
