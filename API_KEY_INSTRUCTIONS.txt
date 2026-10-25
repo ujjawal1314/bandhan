@@ -1,0 +1,89 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║         🤖 GEMINI API KEY - QUICK SETUP (3 STEPS)                   ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+STEP 1: GET YOUR API KEY
+═══════════════════════════════════════════════════════════════════════
+1. Open browser: https://makersuite.google.com/app/apikey
+2. Sign in with Google account
+3. Click "Create API Key"
+4. Copy the key (looks like: AIzaSyABC123def456...)
+
+STEP 2: ADD KEY TO .env FILE
+═══════════════════════════════════════════════════════════════════════
+1. Open file: SatarkSetu/.env
+2. Find line: GEMINI_API_KEY=your_api_key_here
+3. Replace with: GEMINI_API_KEY=AIzaSyABC123def456...
+   (paste your actual key)
+4. Save file
+
+EXAMPLE:
+────────────────────────────────────────────────────────────────────
+Before:
+GEMINI_API_KEY=your_api_key_here
+
+After:
+GEMINI_API_KEY=AIzaSyDXE7F8G9H0I1J2K3L4M5N6O7P8Q9R0S1T
+────────────────────────────────────────────────────────────────────
+
+STEP 3: RESTART DASHBOARD
+═══════════════════════════════════════════════════════════════════════
+If dashboard is running:
+  1. Press Ctrl+C to stop
+  2. Run: streamlit run dashboard_enhanced.py
+
+If not running:
+  Run: streamlit run dashboard_enhanced.py
+
+✅ VERIFY IT WORKS
+═══════════════════════════════════════════════════════════════════════
+1. Dashboard should start without warning message
+2. Go to "Ring Analysis" view
+3. Click "🤖 Generate AI Explanation"
+4. Should see detailed, natural language explanation
+
+⚠️ IMPORTANT NOTES
+═══════════════════════════════════════════════════════════════════════
+• NO quotes around the key
+• NO spaces before/after the key
+• File must be named exactly: .env (not .env.txt)
+• System works without key (fallback mode)
+• Keep your key private (never share)
+
+💰 PRICING (Very Affordable!)
+═══════════════════════════════════════════════════════════════════════
+• Free tier: 15 requests/minute, 1M tokens/day
+• Cost per explanation: ~$0.0001 (less than 1 cent)
+• Perfect for demos and testing!
+
+🔧 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════
+Problem: Still seeing "Using fallback explanations"
+Solution: 
+  1. Check .env file exists in SatarkSetu folder
+  2. Verify key has no spaces or quotes
+  3. Restart dashboard completely
+  4. Check key is valid at Google AI Studio
+
+Problem: "API key invalid"
+Solution:
+  1. Go to https://makersuite.google.com/app/apikey
+  2. Delete old key
+  3. Create new key
+  4. Update .env file
+
+📁 FILE LOCATION
+═══════════════════════════════════════════════════════════════════════
+Your .env file is here:
+C:\Users\Neil baranwal\Downloads\SatarkSetu\SatarkSetu\.env
+
+Open with: Notepad, VS Code, or any text editor
+
+═══════════════════════════════════════════════════════════════════════
+                    YOU'RE ALL SET! 🎉
+═══════════════════════════════════════════════════════════════════════
+
+Next: Run dashboard and enjoy AI-powered explanations!
+
+Command: streamlit run dashboard_enhanced.py
+

@@ -1,0 +1,3 @@
+@echo off
+echo Starting Bandhan Dashboard...
+streamlit run dashboard.py

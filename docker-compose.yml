@@ -1,3 +1,5 @@
+# Bandhan - Docker Compose Configuration
+
 services:
   frontend:
     build:

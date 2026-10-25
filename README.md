@@ -1,233 +1,345 @@
 # Bandhan
-### Intelligent Loan Recovery Workflow Management System Using AI-Based Risk Prediction
 
----
+Bandhan is an AI-powered early warning and recovery platform for Indian Bank's MSME and government-scheme loan portfolios. The system is designed to identify borrower financial stress before loan default occurs by combining behavioral signals, peer benchmarking, and regional stress indicators into a contextual risk view.
 
-## Project Name & Overview
+This repository packages the MVP as a Python and Streamlit application with supporting backend services, datasets, and documentation. The goal is to help developers, judges, and collaborators understand how the platform works end to end and how the current codebase maps to that architecture.
 
-**Bandhan** is a centralized, cloud-based software platform that digitizes and manages the entire loan recovery lifecycle for banks and financial institutions — from borrower and loan onboarding, through recovery case creation and field-officer assignment, to AI-assisted risk prioritization and manager-level reporting.
+## Project Overview
 
-The project is built primarily as a **Software Engineering** exercise, demonstrating the full SDLC (requirements → design → implementation → testing → deployment → maintenance) using an Agile Scrum process across 6 sprints. Artificial Intelligence is used in a single, well-scoped capacity — borrower risk scoring — rather than as the core focus of the system.
+Bandhan introduces the Continuous Borrower Health Model (CBHM), a custom intelligence layer that estimates borrower health using repayment behavior, balance trends, transaction stability, cohort comparisons, and geographic loan stress signals.
 
----
+The platform is built to help banks:
 
-## Problem It Solves
+- Monitor borrower financial health in near real time
+- Detect early stress signals before EMI default
+- Compare borrower performance against similar peers
+- Adjust risk interpretation using regional NPA pressure
+- Prioritize recovery actions using contextual intelligence
+- Provide transparent health insights to borrowers
 
-Loan recovery in most financial institutions today still relies on manual spreadsheets, phone calls, and disconnected systems. This creates several recurring problems:
+Bandhan shifts loan recovery from reactive enforcement to proactive financial assistance.
 
-- Case tracking is fragmented and error-prone
-- Assigning recovery officers to cases is a manual, ad-hoc process
-- Managers lack real-time visibility into recovery progress
-- Generating reports is slow and time-consuming
-- High-risk borrowers are difficult to identify early, delaying intervention
+## Technology Stack
 
-**Bandhan** addresses these problems by centralizing borrower, loan, and recovery case data in one system, supporting officer assignment and status tracking, and surfacing AI-generated risk scores so managers can prioritize cases that require attention.
----
+### Frontend and UI
 
-## Target Users (Personas)
+- Streamlit powers the primary bank monitoring dashboard
+- Interactive views present borrower health, risk levels, and recommendations
+- Charts and visual indicators highlight borrower score, peer score, and regional stress
+- Dashboard copy is oriented toward explainable borrower-risk monitoring
 
-| Persona | Role Summary | Key Needs |
-|---|---|---|
-| **Admin** | Manages the platform itself | Create/manage users, assign roles, view system logs |
-| **Manager** | Oversees recovery operations | Create borrowers/loans/cases, assign officers, monitor progress, view AI risk scores, access dashboards & reports |
-| **Recovery Officer** | Works cases in the field | View assigned cases, log visit details and remarks, update recovery status |
-| **Borrower** | The individual with an outstanding loan | View loan details and current recovery status |
+### Backend
 
----
+- Python 3.x handles application logic and orchestration
+- Pandas and NumPy support feature preparation and scoring workflows
+- FastAPI provides service endpoints for analysis, account state, and demo operations
+- Risk processing is structured around borrower-level scoring and monitoring flows
 
-## Vision Statement
+### Data Layer
 
-> To replace fragmented, manual loan-recovery processes with a single, centralized platform that gives every stakeholder — from field officer to manager — real-time visibility and AI-informed prioritization, while remaining simple, secure, and cloud-ready from day one.
+- Structured CSV datasets are used in the MVP for local development and demos
+- The design can be extended to PostgreSQL or another operational data store
+- The platform expects borrower profile data, transaction history, and regional performance context
 
----
+### AI and Intelligence Layer
 
-## Key Features / Goals
+- CBHM is the conceptual scoring engine for borrower health evaluation
+- Behavioral risk inference focuses on financial stress rather than static credit history alone
+- Contextual risk adjustments use peer and geographic signals to refine interpretation
+- AI-generated explanations can convert raw score outputs into understandable action guidance
 
-- **Secure Authentication & RBAC** — JWT-based login with role-based access for Admin, Manager, Officer, and Borrower
-- **User Management** — Admin-controlled creation and management of Manager and Officer accounts
-- **Borrower Management** — Centralized borrower profiles (contact, address, employment, documents)
-- **Loan Management** — Track loan amount, due dates, interest, and status
-- **Recovery Case Management** — Create cases, assign officers, track status, log visit history and remarks
-- **AI Risk Prediction** — ML-based risk scoring on borrower data to help managers prioritize recovery efforts
-- **Reporting** — Recovery summaries, pending case reports, and officer performance reports
-- **Containerized Deployment** — Docker-based packaging deployed to AWS EC2, with GitHub-based version control and CI/CD
+### Infrastructure
 
----
+- Git and GitHub support collaboration and version control
+- Environment variables configure AI integrations and service connectivity
+- Docker artifacts are available for containerized deployment
 
-## Success Metrics
+## System Architecture
 
-- All **Must Have** MoSCoW features (auth, RBAC, borrower/loan/case management, officer assignment, dashboard, PostgreSQL, Docker setup) implemented and demonstrable by the end of Sprint 4
-- End-to-end recovery workflow (create case → assign officer → update status → resolve) functions without manual workarounds
-- AI risk prediction module returns a risk score for a borrower in under 2 seconds
-- System successfully containerized and deployed to AWS EC2 with a working CI/CD pipeline via GitHub
-- All 6 sprints completed on schedule with SRS, architecture diagrams, and test documentation delivered alongside working software
+Bandhan can be understood as a layered system.
 
----
+### 1. Data Layer
 
-## Local Development Tools
+This layer stores or loads the inputs required for borrower evaluation:
 
-To set up and run Bandhan locally, install the following tools:
+- Borrower profiles
+- Loan metadata
+- Repayment and transaction behavior
+- Regional loan performance or NPA context
 
-| Tool | Purpose | Version |
-|---|---|---|
-| [Git](https://git-scm.com/downloads) | Version control | 2.40+ |
-| [Node.js](https://nodejs.org/) + npm | Running/building the React frontend | Node 18+ |
-| [Python](https://www.python.org/downloads/) | Running the FastAPI backend & AI risk model | 3.11+ |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Containerizing and running the full stack | Latest |
-| [PostgreSQL](https://www.postgresql.org/download/) | Local database (optional if using the Dockerized DB) | 15+ |
-| [GitHub CLI](https://cli.github.com/) | Managing issues/PRs from the terminal | Latest |
-| Code editor — [VS Code](https://code.visualstudio.com/) (recommended) | Development environment | Latest |
+In the current MVP, sample datasets are loaded from local CSV files. In production, the same structure can be backed by PostgreSQL or another bank-controlled data source.
 
-### Recommended VS Code Extensions
-- Python (Microsoft)
-- ESLint
-- Prettier
-- Docker (Microsoft)
-- PostgreSQL / SQLTools (optional, for querying the DB directly)
+### 2. Feature Processing Layer
 
-### Verifying Your Setup
-Run the following to confirm each tool is installed correctly:
+This layer transforms raw borrower activity into model-ready signals. Typical derived features include:
+
+- Repayment consistency
+- Transaction inflow and outflow stability
+- Account balance trends
+- Missed or delayed payment patterns
+- Loan scheme cohort statistics
+- Regional stress indicators
+
+This is where raw operational data becomes a borrower-health representation.
+
+### 3. AI Intelligence Layer
+
+The Continuous Borrower Health Model (CBHM) estimates base borrower health. The model is intended to prioritize behavioral evidence over static credit labels by asking whether the borrower is becoming financially stressed, how quickly that change is happening, and whether that change is unusual for the borrower's context.
+
+### 4. Contextual Risk Layer
+
+The contextual layer refines the base health estimate using:
+
+- Peer comparison for similar borrowers
+- Loan-scheme benchmarking
+- Regional NPA or economic-stress context
+
+This layer prevents simplistic scoring by distinguishing a borrower-specific deterioration from broader regional pressure.
+
+### 5. Backend Processing Layer
+
+Python services coordinate data loading, feature extraction, score generation, risk classification, and API responses. The backend is responsible for turning datasets into dashboard-ready analysis and exposing analysis endpoints to other interfaces.
+
+### 6. Presentation Layer
+
+The Streamlit dashboard surfaces:
+
+- Portfolio health summaries
+- Borrower-level drilldowns
+- Peer comparison metrics
+- Regional stress context
+- Recommended intervention actions
+
+The presentation layer is intended for both bank-side monitoring and borrower-facing transparency flows.
+
+## Data Flow
+
+The intended data flow is:
+
+1. Borrower, loan, transaction, and regional context data are loaded
+2. Behavioral and contextual features are extracted
+3. CBHM computes a base borrower health score
+4. Peer comparison adjusts the score relative to a borrower cohort
+5. Regional stress modifies interpretation of borrower deterioration
+6. A final contextual risk score and category are assigned
+7. Recovery recommendations are generated
+8. Dashboards and APIs present the results
+
+## Borrower Data Model
+
+The core entity is `Borrower`.
+
+Recommended properties:
+
+- `borrower_id`
+- `name`
+- `loan_scheme`
+- `region`
+- `loan_amount`
+- `health_score`
+- `peer_score`
+- `regional_stress_factor`
+- `risk_level`
+
+Why these attributes matter:
+
+- `borrower_id` provides a stable reference for analysis and tracking
+- `name` supports operational review and borrower communication
+- `loan_scheme` enables cohort comparisons across Mudra, PMEGP, MSME, and related portfolios
+- `region` enables contextual interpretation using district or state-level loan stress
+- `loan_amount` helps normalize peer comparisons by exposure size
+- `health_score` stores the direct model view of borrower condition
+- `peer_score` shows how the borrower compares to similar borrowers
+- `regional_stress_factor` helps separate borrower-specific weakness from systemic pressure
+- `risk_level` converts the score into operational action categories
+
+## Continuous Borrower Health Model (CBHM)
+
+CBHM estimates borrower financial health using behavior-first signals instead of relying only on static credit history.
+
+### Inputs
+
+Behavioral financial signals:
+
+- Repayment timing patterns
+- Account balance trends
+- Transaction inflow and outflow stability
+
+Peer benchmarking:
+
+- Average health of borrowers with similar schemes
+- Comparison against similar loan amounts
+- Cohort-based deviation analysis
+
+Regional context:
+
+- Regional NPA levels
+- Geographic economic stress indicators
+
+### Conceptual Scoring Logic
+
+A simple conceptual version is:
+
+`Adjusted Score = Base Health Score + Regional Factor - Peer Deviation Adjustment`
+
+This supports a more accurate interpretation of risk:
+
+- A borrower deteriorating faster than peers may require proactive action
+- A weak score in a highly stressed region may call for assisted recovery instead of immediate escalation
+- A borrower performing above a weak regional baseline may be less urgent than raw score alone suggests
+
+## Contextual Risk Intelligence
+
+### Peer Comparison
+
+Borrowers are compared against peers with:
+
+- Similar loan schemes
+- Similar loan sizes
+- Similar borrower categories
+
+This helps determine whether a borrower is an outlier or simply tracking normal cohort behavior.
+
+### Regional Risk Context
+
+Regional NPA trends and economic pressure indicators adjust interpretation of borrower risk. For example, if one state shows structurally higher MSME loan stress than another, Bandhan can avoid over-penalizing borrowers whose weaker patterns reflect regional conditions rather than borrower-specific breakdown.
+
+This reduces false alarms and improves recovery prioritization.
+
+## Backend Processing Logic
+
+The intended borrower-risk evaluation pipeline is:
+
+1. Borrower data is loaded from the dataset or service layer
+2. Behavioral features are extracted from transactions and repayment patterns
+3. CBHM computes a base health score
+4. Peer comparison adjusts the score relative to the cohort
+5. Regional context modifies the result using geographic stress
+6. The final score is classified into a risk category
+7. A recovery recommendation is generated
+8. Results are displayed through dashboards and APIs
+
+## Risk Classification
+
+The platform uses a 0-100 score range.
+
+- High Risk: high probability of borrower default or urgent stress
+- Moderate Risk: meaningful stress signals, but still manageable with intervention
+- Low Risk: stable borrower behavior with no major early-warning indicators
+
+Recommendations are driven by the category:
+
+- High Risk: urgent outreach, restructuring review, manual monitoring, recovery prioritization
+- Moderate Risk: assisted follow-up, repayment reminders, watchlist monitoring, borrower counseling
+- Low Risk: routine monitoring and preventive nudges
+
+## Dashboards
+
+### Bank Dashboard
+
+The bank dashboard is designed for portfolio monitoring and intervention planning. Typical elements include:
+
+- Borrower table
+- Risk indicators
+- Peer comparison metrics
+- Regional stress context
+- Recommended intervention actions
+
+The goal is to help officers prioritize recovery based on contextual intelligence rather than isolated alerts.
+
+### Borrower Transparency Dashboard
+
+The borrower-facing view is intended to show:
+
+- Loan health score
+- Peer comparison
+- Regional context indicators
+- Repayment guidance
+
+This supports proactive repayment behavior and reduces the stigma of opaque risk labeling.
+
+## Visualization Logic
+
+Key metrics include:
+
+- Borrower health score
+- Peer average comparison
+- Regional stress indicator
+
+Color cues:
+
+- Green for healthy borrowers
+- Yellow for moderate stress
+- Red for high-risk borrowers
+
+These visual signals let bank officers identify deterioration quickly and consistently.
+
+## Demo Workflow
+
+The demo story for Bandhan is:
+
+1. Load the borrower portfolio dashboard
+2. Select a borrower from a stressed region or scheme
+3. Run CBHM-based contextual scoring
+4. Compare the borrower against peers
+5. Adjust interpretation using regional NPA context
+6. Generate a recovery recommendation
+7. Show a borrower-side health summary view
+
+This demonstrates explainable and contextual borrower-risk intelligence.
+
+## Deployment
+
+### Local Development
+
+- Python environment
+- Streamlit application
+- CSV-backed sample dataset
+
+Typical commands:
+
 ```bash
-git --version
-node --version
-npm --version
-python --version
-docker --version
-docker compose version
-gh --version
-```
-
-### Environment Variables
-Create a `.env` file in the project root (see `.env.example`) with the following:
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/bandhan
-JWT_SECRET=your-secret-key
-AI_MODEL_PATH=./ai/models/risk_model.pkl
-```
-
-## Assumptions & Constraints
-
-**Assumptions**
-- Loan and borrower data used during development will be sample/synthetic data, not real customer data
-- A single AI/ML model (trained on available sample data) is sufficient to demonstrate risk-scoring functionality — model accuracy is not the primary evaluation criterion for this Software Engineering course project
-- Users (Admin, Manager, Officer) are internal staff with basic digital literacy; no extensive onboarding/training flow is required for v1
-
-**Constraints**
-- Project scope is limited to the **Must Have** and **Should Have** MoSCoW items for the current version; features under **Won't Have** (payment gateway, chatbot, OTP auth, mobile app, real-time chat, etc.) are explicitly out of scope
-- Fixed academic timeline of 6 sprints
-- Tech stack is fixed: React (frontend), FastAPI (backend), PostgreSQL (database), Python (AI), Docker + AWS EC2 (deployment), GitHub (version control)
-- AI is scoped strictly to risk prediction — it does not drive any other part of the workflow (e.g., no automated decision-making or case assignment)
-
-## Quick Start — Local Development
-
-### Prerequisites
-Make sure you've installed everything listed in [Local Development Tools](#local-development-tools) above, and that Docker Desktop is running.
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/ujjawal1314/bandhan.git
-cd bandhan
-```
-
-### 2. Set up environment variables
-```bash
-cp .env.example .env
-```
-Then open `.env` and fill in any values specific to your machine (defaults work fine for local development).
-
-### 3. Build and run the full stack with Docker
-```bash
-docker compose up --build
-```
-This starts three containers:
-- `bandhan-db` — PostgreSQL database on port `5432`
-- `bandhan-backend` — FastAPI backend on port `8000`
-- `bandhan-frontend` — React frontend on port `3000`
-
-### 4. Access the app
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend API docs (FastAPI Swagger UI): [http://localhost:8000/docs](http://localhost:8000/docs)
-
-### 5. Stopping the app
-```bash
-docker compose down
-```
-To also remove the database volume (fresh start):
-```bash
-docker compose down -v
-```
-
-### Running Without Docker (optional, for active development)
-
-**Backend:**
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+streamlit run dashboard_enhanced.py
 ```
 
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm start
+Environment variables can be used for:
+
+- AI provider API keys
+- Backend service URLs
+- Optional graph or database connectivity
+
+### Containerization
+
+Docker assets are included for teams that want a packaged local or demo deployment.
+
+## Project Structure
+
+```text
+bandhan/
+├── backend/                 # Service and processing logic
+├── dashboard/               # Streamlit UI and presentation components
+├── data/                    # Borrower and regional datasets
+├── config/                  # Environment and configuration files
+├── docs/                    # Technical documentation
+└── tests/                   # Validation and regression coverage
 ```
 
-**Database:** install PostgreSQL locally and update `DATABASE_URL` in `.env` to point to it, or keep using the Dockerized `db` service alone:
-```bash
-docker compose up db
-```
+The current repository contains legacy hackathon implementation files as well as the newer Bandhan positioning and documentation. As the product evolves, the folder layout can be normalized toward the structure above.
 
-## Branching Strategy
+## Goal of the System
 
-Bandhan follows the **GitHub Flow** branching strategy to ensure organized development, efficient collaboration, and a stable codebase throughout the Software Development Life Cycle (SDLC). Each new feature is developed in a dedicated feature branch, allowing team members to work independently without directly affecting the stability of the `main` branch.
+Bandhan aims to:
 
-### Branches
+- Detect loan repayment stress early
+- Reduce NPAs in PSU banking portfolios
+- Enable proactive borrower support
+- Improve recovery efficiency through contextual intelligence
+- Provide transparent borrower financial health insights
 
-| Branch | Purpose |
-|--------|---------|
-| `main` | Contains the latest stable and production-ready version of the project. All tested and reviewed changes are merged into this branch. |
-| `feature/login` | Development of secure authentication and Role-Based Access Control (RBAC) functionality. |
-| `feature/loan-management` | Development of loan management interfaces and related loan account functionality. |
-| `feature/recovery-case-management` | Development of recovery case management, case tracking, recovery stages, and follow-up workflows. |
-| `feature/ai-risk-prediction` | Development of the AI-based borrower risk prediction module and its integration with the backend. |
-| `feature/analytics-reports` | Development of portfolio analytics, recovery performance metrics, charts, and reporting functionality. |
-| `feature/action-center` | Development of the Action Center for pending tasks, important alerts, follow-ups, schedules, and activities requiring user attention. |
+The system reframes loan recovery as a data-driven early warning workflow for financial risk management.
 
-### Development Workflow
-
-The project follows the GitHub Flow process:
-
-1. Create a new feature branch from the `main` branch.
-2. Develop and test the assigned feature independently.
-3. Commit changes with meaningful commit messages.
-4. Push the feature branch to GitHub.
-5. Create a Pull Request (PR) for code review.
-6. After successful review and testing, merge the feature branch into the `main` branch.
-
-### Benefits
-
-- Enables parallel development by multiple team members.
-- Keeps the `main` branch stable and deployment-ready.
-- Reduces merge conflicts through isolated feature development.
-- Supports systematic code review using Pull Requests.
-- Provides clear version history and improves project maintainability.
-
-This branching strategy ensures a clean, scalable, and collaborative development workflow while following industry-standard Git version control practices.
-
-### Workflow
-
-git checkout -b feature/your-feature-name
-git add .
-git commit -m "Add: short description of change"
-git push origin feature/your-feature-name
-
-### Why this matters
-- **Traceability** — branch names tied to user story IDs (e.g. `us-08`) let anyone reviewing the repo see exactly which branch implemented which requirement
-- **Safe collaboration** — isolates in-progress work so it can't break `develop` or `main`
-- **Demonstrates SDLC process** — reflects standard industry practice, showing the project follows a real development workflow rather than just producing working code
+---
 
 ## Software Design
 

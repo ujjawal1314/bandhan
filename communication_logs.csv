@@ -1,0 +1,13 @@
+timestamp,admin_name,borrower_id,borrower_name,channel,message_type,message_content,delivery_status,read_status
+2026-07-08 09:09:00,jyoti,BORR_00001,Rahul Singh,Both,EMI Reminder,"Dear Rahul Singh,
+
+This is a reminder regarding your Mudra Loan account at Shimla Mall Road Branch. Our records show that your EMI due date was/is 29-May-2026. Your outstanding balance is Rs 932,373.64, and your last successful EMI payment was recorded on 2026-05-15.
+
+Currently, your account holds a Health Score of 55.0/100. Kindly ensure your outstanding dues are cleared to maintain a healthy account standing and avoid late payment charges.
+
+Suggested Next Action: Clear outstanding EMI within 3 working days.
+For assistance, please visit Shimla Mall Road Branch or contact the manager at +91 89 7416227 / email manager.shimla.mall.road@bandhanbank.co.in.
+
+Warm regards,
+Bandhan Admin
+Bandhan Bank Recovery Division",Simulated,N/A
